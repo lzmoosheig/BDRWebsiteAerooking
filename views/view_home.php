@@ -25,17 +25,17 @@ ob_start();
 			<div class="col-md-4">
 				<div class="booking-cta">
 					<h1>Aerooking</h1><br>
-					<p>Pour satisfaire tes envies de voyage !</p>
+					<p>Pour satisfaire vos envies de voyage !</p>
 				</div>
 			</div>				
 			<div class="col-md-6 col-md-offset-1">
 				<div class="booking-form">
-					<form>
+					<form action="index.php?action=getFlight" method="post">
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
 									<H1>Départ</H1>
-										<select name="depart" id="depart" multiple multiselect-search="true" multiselect-select-all="false" multiselect-max-items="3" onchange="console.log(this.selectedOptions)" style="max-width:90%" required>
+										<select name="depart" id="depart" multiple multiselect-search="true" multiselect-select-all="false" multiselect-max-items="3" onchange="console.log(this.selectedOptions)" style="max-width:90%" class="form-control" required>
 										  <option value="CDG">Charles de Gaulle (Paris, France)</option>
 										  <option value="ORY">Orly (Paris, France)</option>
 										  <option value="JFK">John F. Kennedy (New York, États-Unis)</option>
@@ -58,7 +58,7 @@ ob_start();
 							<div class="col-md-6">
 								<div class="form-group">
 									<H1>Arrivé</H1>
-									<select name="arrive" id="arrive" multiple multiselect-search="true" multiselect-select-all="false" multiselect-max-items="3" onchange="console.log(this.selectedOptions)" style="max-width:90%" required>
+									<select name="arrive" id="arrive" multiple multiselect-search="true" multiselect-select-all="false" multiselect-max-items="3" onchange="console.log(this.selectedOptions)" style="max-width:90%" class="form-control" required>
 										  <option value="CDG">Charles de Gaulle (Paris, France)</option>
 										  <option value="ORY">Orly (Paris, France)</option>
 										  <option value="JFK">John F. Kennedy (New York, États-Unis)</option>
@@ -97,7 +97,6 @@ ob_start();
 							<div class="form-btn">
 								<button class="submit-btn">Show flights</button>
 							</div>
-
 							</form>
 						</div>
 					</div>

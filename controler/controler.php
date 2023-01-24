@@ -39,6 +39,11 @@ function signup()
 	require "views/view_signup.php";
 }
 
+function getflight()
+{
+	require "views/view_flight.php";
+}
+
 /**
  * login: Show Login Page
  */

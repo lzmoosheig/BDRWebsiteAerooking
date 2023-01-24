@@ -20,6 +20,8 @@ try
             case 'login': login(); break;
 			
 			case 'signup' : signup(); break;
+			
+			case 'getFlight' : getflight(); break;
 
             case 'logout': logout(); break;
 
