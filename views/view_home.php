@@ -18,8 +18,6 @@ ob_start();
     }
 </style>
 
-
-
 </head>
 <div class="section-center">
 	<div class="container">
@@ -37,178 +35,76 @@ ob_start();
 							<div class="col-md-6">
 								<div class="form-group">
 									<H1>Départ</H1>
-										<select name="field2" id="field2" multiple multiselect-search="true" multiselect-select-all="true" multiselect-max-items="3" onchange="console.log(this.selectedOptions)" style="max-width:90%";>
-											<option>Abarth</option>
-											<option>Alfa Romeo</option>
-											  <option>Aston Martin</option>
-											  <option>Audi</option>
-											  <option>Bentley</option>
-											  <option>BMW</option>
-											  <option>Bugatti</option>
-											  <option>Cadillac</option>
-											  <option>Chevrolet</option>
-											  <option>Chrysler</option>
-											  <option>Citroën</option>
-											  <option>Dacia</option>
-											  <option>Daewoo</option>
-											  <option>Daihatsu</option>
-											  <option>Dodge</option>
-											  <option>Donkervoort</option>
-											  <option>DS</option>
-											  <option>Ferrari</option>
-											  <option>Fiat</option>
-											  <option>Fisker</option>
-											  <option>Ford</option>
-											  <option>Honda</option>
-											  <option>Hummer</option>
-											  <option>Hyundai</option>
-											  <option>Infiniti</option>
-											  <option>Iveco</option>
-											  <option>Jaguar</option>
-											  <option>Jeep</option>
-											  <option>Kia</option>
-											  <option>KTM</option>
-											  <option>Lada</option>
-											  <option>Lamborghini</option>
-											  <option>Lancia</option>
-											  <option>Land Rover</option>
-											  <option>Landwind</option>
-											  <option>Lexus</option>
-											  <option>Lotus</option>
-											  <option>Maserati</option>
-											  <option>Maybach</option>
-											  <option>Mazda</option>
-											  <option>McLaren</option>
-											  <option>Mercedes-Benz</option>
-											  <option>MG</option>
-											  <option>Mini</option>
-											  <option>Mitsubishi</option>
-											  <option>Morgan</option>
-											  <option>Nissan</option>
-											  <option>Opel</option>
-											  <option>Peugeot</option>
-											  <option>Porsche</option>
-											  <option>Renault</option>
-											  <option>Rolls-Royce</option>
-											  <option>Rover</option>
-											  <option>Saab</option>
-											  <option>Seat</option>
-											  <option>Skoda</option>
-											  <option>Smart</option>
-											  <option>SsangYong</option>
-											  <option>Subaru</option>
-											  <option>Suzuki</option>
-											  <option>Tesla</option>
-											  <option>Toyota</option>
-											  <option>Volkswagen</option>
-											  <option>Volvo</option>
+										<select name="depart" id="depart" multiple multiselect-search="true" multiselect-select-all="false" multiselect-max-items="3" onchange="console.log(this.selectedOptions)" style="max-width:90%" required>
+										  <option value="CDG">Charles de Gaulle (Paris, France)</option>
+										  <option value="ORY">Orly (Paris, France)</option>
+										  <option value="JFK">John F. Kennedy (New York, États-Unis)</option>
+										  <option value="LGA">LaGuardia (New York, États-Unis)</option>
+										  <option value="LHR">Heathrow (Londres, Royaume-Uni)</option>
+										  <option value="LGW">Gatwick (Londres, Royaume-Uni)</option>
+										  <option value="NRT">Narita (Tokyo, Japon)</option>
+										  <option value="HND">Haneda (Tokyo, Japon)</option>
+										  <option value="GRU">Guarulhos (Sao Paulo, Brésil)</option>
+										  <option value="SYD">Sydney (Sydney, Australie)</option>
+										  <option value="DXB">Dubaï (Dubaï, Émirats Arabes Unis)</option>
+										  <option value="IST">Atatürk (Istanbul, Turquie)</option>
+										  <option value="SAW">Sabiha Gökçen (Istanbul, Turquie)</option>
+										  <option value="PVG">Pudong (Shanghai, Chine)</option>
+										  <option value="SHA">Hongqiao (Shanghai, Chine)</option>
+										  <option value="YYZ">Pearson International (Toronto, Canada)</option>
 									</select>	
 								</div>
 							</div>
-
-
 							<div class="col-md-6">
 								<div class="form-group">
 									<H1>Arrivé</H1>
-									<select name="field2" id="field2" multiple multiselect-search="true" multiselect-select-all="true" multiselect-max-items="3" onchange="console.log(this.selectedOptions)" style="max-width:90%";>
-											  <option>Abarth</option>
-											  <option>Alfa Romeo</option>
-											  <option>Aston Martin</option>
-											  <option>Audi</option>
-											  <option>Bentley</option>
-											  <option>BMW</option>
-											  <option>Bugatti</option>
-											  <option>Cadillac</option>
-											  <option>Chevrolet</option>
-											  <option>Chrysler</option>
-											  <option>Citroën</option>
-											  <option>Dacia</option>
-											  <option>Daewoo</option>
-											  <option>Daihatsu</option>
-											  <option>Dodge</option>
-											  <option>Donkervoort</option>
-											  <option>DS</option>
-											  <option>Ferrari</option>
-											  <option>Fiat</option>
-											  <option>Fisker</option>
-											  <option>Ford</option>
-											  <option>Honda</option>
-											  <option>Hummer</option>
-											  <option>Hyundai</option>
-											  <option>Infiniti</option>
-											  <option>Iveco</option>
-											  <option>Jaguar</option>
-											  <option>Jeep</option>
-											  <option>Kia</option>
-											  <option>KTM</option>
-											  <option>Lada</option>
-											  <option>Lamborghini</option>
-											  <option>Lancia</option>
-											  <option>Land Rover</option>
-											  <option>Landwind</option>
-											  <option>Lexus</option>
-											  <option>Lotus</option>
-											  <option>Maserati</option>
-											  <option>Maybach</option>
-											  <option>Mazda</option>
-											  <option>McLaren</option>
-											  <option>Mercedes-Benz</option>
-											  <option>MG</option>
-											  <option>Mini</option>
-											  <option>Mitsubishi</option>
-											  <option>Morgan</option>
-											  <option>Nissan</option>
-											  <option>Opel</option>
-											  <option>Peugeot</option>
-											  <option>Porsche</option>
-											  <option>Renault</option>
-											  <option>Rolls-Royce</option>
-											  <option>Rover</option>
-											  <option>Saab</option>
-											  <option>Seat</option>
-											  <option>Skoda</option>
-											  <option>Smart</option>
-											  <option>SsangYong</option>
-											  <option>Subaru</option>
-											  <option>Suzuki</option>
-											  <option>Tesla</option>
-											  <option>Toyota</option>
-											  <option>Volkswagen</option>
-											  <option>Volvo</option>
+									<select name="arrive" id="arrive" multiple multiselect-search="true" multiselect-select-all="false" multiselect-max-items="3" onchange="console.log(this.selectedOptions)" style="max-width:90%" required>
+										  <option value="CDG">Charles de Gaulle (Paris, France)</option>
+										  <option value="ORY">Orly (Paris, France)</option>
+										  <option value="JFK">John F. Kennedy (New York, États-Unis)</option>
+										  <option value="LGA">LaGuardia (New York, États-Unis)</option>
+										  <option value="LHR">Heathrow (Londres, Royaume-Uni)</option>
+										  <option value="LGW">Gatwick (Londres, Royaume-Uni)</option>
+										  <option value="NRT">Narita (Tokyo, Japon)</option>
+										  <option value="HND">Haneda (Tokyo, Japon)</option>
+										  <option value="GRU">Guarulhos (Sao Paulo, Brésil)</option>
+										  <option value="SYD">Sydney (Sydney, Australie)</option>
+										  <option value="DXB">Dubaï (Dubaï, Émirats Arabes Unis)</option>
+										  <option value="IST">Atatürk (Istanbul, Turquie)</option>
+										  <option value="SAW">Sabiha Gökçen (Istanbul, Turquie)</option>
+										  <option value="PVG">Pudong (Shanghai, Chine)</option>
+										  <option value="SHA">Hongqiao (Shanghai, Chine)</option>
+										  <option value="YYZ">Pearson International (Toronto, Canada)</option>
 									</select>	
 								</div>
 							</div>
-							</div>
-
-
-																	
-									<div class="row">
-
+							</div>							
+								<div class="row">
 									<div class="col-md-6">
 										<div class="form-group">
 											<span class="form-label">Departing</span>
 												<input class="form-control" type="date" required>
 										</div>
 									</div>
-									<div class="col-md-6">
-										<div class="form-group">
-											<span class="form-label">Returning</span>
-												<input class="form-control" type="date" required>
-										</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<span class="form-label">Returning</span>
+											<input class="form-control" type="date" required>
 									</div>
+								</div>
+							</div>
 
-									</div>
+							<div class="form-btn">
+								<button class="submit-btn">Show flights</button>
+							</div>
 
-									<div class="form-btn">
-										<button class="submit-btn">Show flights</button>
-									</div>
-
-									</form>
-									</div>
-									</div>
-									</div>
-									</div>
-									</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
 
 
 
