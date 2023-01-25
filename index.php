@@ -20,6 +20,10 @@ try
             case 'login': login(); break;
 			
 			case 'signup' : signup(); break;
+
+            case 'signupDb' : signupDb(); break;
+
+            case 'signin': signin(); break;
 			
 			case 'getFlight' : getflight(); break;
 

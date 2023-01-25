@@ -48,6 +48,15 @@ function getUser($mail)
     return $user;
 }
 
+function createUser($userData)
+{
+    extract($userData);
+    // $email et $pswd
+    //sendQuery("INSERT INTO Rooms (Name, LightState, DoorsState, Shelters_idShelters) VALUES ('$Name', $lightState, $doorState, $idShelter);");
+
+    $user = sendQuery("INSERT INTO compte (mail,motdepasse) VALUES ('$email','$pswd')");
+}
+
 /**
  * getUserInfo: This function will be used for getting Firstname and Lastname of a user
  * @param $mail

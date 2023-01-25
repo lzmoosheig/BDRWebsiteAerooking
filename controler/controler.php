@@ -59,23 +59,14 @@ function login()
     }
 }
 
-/**
- * fillCPA_View: Show Fill Cpa Page
- */
-function fillCPA_View()
+function signupDb()
 {
-    if(isset($_SESSION['user']))
-    {
-        $AllShelterName = getAllSheltersName();
+    extract($_POST);
+    // $email & $pswd
+    // Query à la DB pour insert le password et le mail
+    // INSERT INTO compte (mail,motdepasse) VALUES ($email,$pswd);
 
-        $result = $AllShelterName->fetchAll(PDO::FETCH_ASSOC);
 
-        require "views/view_fillcpa.php";
-
-    } else {
-
-        require "views/view_home.php";
-    }
 }
 
 /**
@@ -84,19 +75,19 @@ function fillCPA_View()
 function signin()
 {
     extract($_POST);
-    // $username & $pass
+    // $email & $pswd
 
-    if (isset($username) && isset($pass))
+    if (isset($email) && isset($pswd))
     {
         // Check if user exist in DB
-        if(compareMail($username))
+        if(compareMail($email))
         {
             // Hash Password (SHA-512)
-            $hashedpass = hash('sha512', $pass);
+            $hashedpass = hash('sha512', $pswd);
 
 
             // Get user information from DB
-            $userinformation = getUser($username);
+            $userinformation = getUser($email);
 
 
             $result = $userinformation->fetch(PDO::FETCH_ASSOC);
@@ -109,7 +100,7 @@ function signin()
 
             // Store user information in Session
             $_SESSION['user'] = $result;
-            header("location:index.php?action=home");
+            header("location:index.php?action=getFlight");
         }
         else
         {

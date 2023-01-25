@@ -9,6 +9,8 @@ $titre = "BDR - Aerooking";
 // ouvre la mémoire tampon
 ob_start();
 ?>
+
+
 <html>
 <head>
 <style>
@@ -196,11 +198,7 @@ ob_start();
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-<!-- USED FOR DEBUG ONLY
-<pre>
-<?php var_dump($_POST); ?>
-</pre>
--->
+
 <div class="section-center">
 	<div class="container">
 		<div class="row">				
@@ -401,8 +399,6 @@ ob_start();
 							<label for="twostopover">Deux escales</label>
 						</td>
 					</tr>
-				</td>
-			
 				<td>
 					<h4> Temps de voyage: </h4>
 					<input type="number" id="tempsvoyage" name="tempsvoyage" step="1" placeholder="Nombre d'heures max">
@@ -417,7 +413,7 @@ ob_start();
 </div>
 </div>
 </div>
-
+</html>
 <script>
 var txt = document.getElementById( 'droptxt' ),
     content = document.getElementById( 'content' ),
