@@ -54,11 +54,15 @@ function sliderTest()
 function showFlight()
 {
 
+    var_dump($_POST);
     $result = getallFlight($_POST);
 
-
-
     require "views/view_showflight.php";
+}
+
+function viewAdmin()
+{
+    require "views/view_admin.php";
 }
 
 function getflight()
@@ -73,6 +77,23 @@ function getflight()
         exit;
     }
 	require "views/view_flight.php";
+}
+
+function viewAddFlight()
+{
+    $airports = getAirportName();
+    $companies = getAllCompanies();
+
+    require "views/view_AddFlight.php";
+}
+
+function createnewflight()
+{
+
+
+    createFlight($_POST);
+
+
 }
 
 /**

@@ -14,7 +14,7 @@ function getBD()
 {
     // Connect to local DB
 
-    $db_connection = pg_connect("host=localhost dbname=testBDR user=postgres password=");
+    $db_connection = pg_connect("host=localhost dbname=testBDR user=postgres password=Coclove22");
     if ($db_connection) {
         echo 'Connection attempt succeeded.';
     } else {
@@ -101,25 +101,74 @@ INNER JOIN ville on Aéroport.nomville = Ville.nom INNER JOIN Pays on Ville.code
 
 function getallFlight($aeroport)
 {
+    var_dump($_POST);
     extract($aeroport);
 
-    $string = "";
+    $stringDepart = "";
 
     foreach ($depart as &$value)
     {
-        $string = $string.$value.',';
+        $stringDepart = $stringDepart.$value.',';
     }
 
-    $string = rtrim($string, ',');
+    $stringDepart = rtrim($stringDepart, ',');
 
-    echo $string;
+    $stringArrive = "";
 
-    $query = "SELECT aéroport.diminutif, vol.nomaéroportdépart, vol.nomaéroportarrivée, compagnie.nom as Compagnie, vol.dateetheurededépart, vol.dateetheuredarrivée, vol.prix
+    foreach ($arrive as &$value)
+    {
+        $stringArrive = $stringArrive.$value.',';
+    }
+
+    $stringArrive = rtrim($stringArrive, ',');
+
+
+    /*
+array (size=13)
+'allerRetour' => string 'simple' (length=6)
+'classe' => string 'economy' (length=7)
+'nbBagMain' => string '1' (length=1)
+'nbBagSoute' => string '1' (length=1)
+'depart' =>
+array (size=3)
+  0 => string 'SYD' (length=3)
+  1 => string 'VIE' (length=3)
+  2 => string 'BRU' (length=3)
+'arrive' =>
+array (size=1)
+  0 => string 'VIE' (length=3)
+'dateDepart' => string '2023-02-03' (length=10)
+'dateArrivée' => string '2023-02-03' (length=10)
+'prixMax' => string '1000' (length=4)
+'ordre' => string 'ASC' (length=3)
+'compagnie' => string 'Air France' (length=10)
+'escale' => string 'direct' (length=6)
+'tempsvoyage' => string '1000' (length=4)
+
+    select \"AéroportDeDépart\", \"AéroportDArrivée\", \"CompagnieAérienne\", \"TempsDeDépart\", \"TempsDArrivée\", \"PrixDuVol\"  from vVols
+group by \"IDVol\", \"AéroportDeDépart\", \"AéroportDArrivée\", \"CompagnieAérienne\", \"TempsDeDépart\", \"TempsDArrivée\", \"PrixDuVol\"
+
+
+*/
+
+
+    $query = "SELECT \"AéroportDeDépart\", \"AéroportDArrivée\", \"CompagnieAérienne\", \"TempsDeDépart\", \"TempsDArrivée\", \"PrixDuVol\" from vVols WHERE "."\"ClasseDeVol\""."="."'$classe'"." AND "."\"MaxBagagesAMain\""."-"."\"NombreDeBagagesAMainDéjàRéservés\"".">=".$nbBagMain." AND "."(".
+        "\"PoidsMaxEnSoute\""."-"."\"PoidsDesBagagesEnSouteDéjàRéservés\")"."/"."\"PoidsMaxDeBagageEnSoute\"".">".$nbBagSoute." AND "."\"DiminutifDeLAéroportDeDépart\""."="."ANY("."'{".$stringDepart."}'".")".
+        "AND "."\"DiminutifDeLAéroportDArrivée\""."="."ANY("."'{".$stringArrive."}'".")"." AND "."\"TempsDeDépart\""." BETWEEN "."'$dateDepart'"." AND "."('$dateDepart'"."+ INTERVAL '1 Day')"." AND ".
+        "\"TempsDArrivée\""." BETWEEN "."'$dateArrivée'"." AND "."('$dateArrivée'"."+ INTERVAL '1 Day') AND "."\"PrixDuVol\""." BETWEEN "."0"." AND ".$prixMax." AND "."\"CompagnieAérienne\""."="."'$compagnie'".
+        " AND "."\"TempsDArrivée\""."-"."\"TempsDeDépart\""."< INTERVAL "."'1 Hour'"." GROUP BY "."\"IDVol\", \"AéroportDeDépart\", \"AéroportDArrivée\", \"CompagnieAérienne\", \"TempsDeDépart\", \"TempsDArrivée\", \"PrixDuVol\""." ORDER BY "."\"PrixDuVol\" ".$ordre."";
+
+    echo $query;
+
+
+
+
+    /*$query = "SELECT aéroport.diminutif, vol.nomaéroportdépart, vol.nomaéroportarrivée, compagnie.nom as Compagnie, vol.dateetheurededépart, vol.dateetheuredarrivée, vol.prix
  FROM vol inner join avion on vol.idavion = avion.id inner join compagnie on avion.nomcompagnie = compagnie.nom 
  inner join aéroport on vol.nomaéroportdépart = aéroport.nom
  WHERE aéroport.diminutif = ANY("."'{".$string."}'".")";
 
-    echo $query;
+    echo $query;*/
 
 
 
@@ -127,6 +176,23 @@ function getallFlight($aeroport)
 
 
     return $flightsInfo;
+}
+
+
+function createFlight($flightInfo)
+{
+    extract($flightInfo);
+
+    $dateheureDepart =  str_replace("T"," ",$dateheureDepart);
+    $dateheureArrive =  str_replace("T"," ",$dateheureArrive);
+
+
+    $query = "INSERT INTO Vol (idAvion, nomAéroportDépart, nomVilleAéroportDépart, codePaysAéroportDépart, nomAéroportArrivée, nomVilleAéroportArrivée, codePaysAéroportArrivée, dateEtHeureDeDépart, dateEtHeureDArrivée, prix, poidsMaxBagagesEnSoute) VALUES ((select MAX(id) from avion
+where nomcompagnie ="."'$compagnie'".")".", (SELECT nom FROM Aéroport WHERE diminutif = "."'$depart'"."), (SELECT nomVille FROM Aéroport WHERE diminutif ="."'$depart'"."), (SELECT codePays FROM Aéroport WHERE diminutif ="."'$depart'"."),
+	(SELECT nom FROM Aéroport WHERE diminutif ="."'$arrive'"."), (SELECT nomVille FROM Aéroport WHERE diminutif ="."'$arrive'"."), (SELECT codePays FROM Aéroport WHERE diminutif = "."'$arrive'"."),"."'$dateheureDepart'".","."'$dateheureArrive'".", (SELECT random_between(30,100)), 23); ";
+
+    sendQuery($query);
+
 }
 
 function createUser($userData)
@@ -186,292 +252,3 @@ function getAllCompanies()
  * @param $shelterName
  * @return PDOStatement
  */
-function GetShelterID($shelterName)
-{
-    $resultats = sendQuery("SELECT idShelters FROM shelters WHERE Sheltersname = :shelterName", array("shelterName"=>$shelterName));
-    return $resultats;
-}
-
-/**
- * GetRecipientID: This function will be used to get the recipient's ID
- * @param $MailAddress
- * @return PDOStatement
- */
-function GetRecipientID($MailAddress)
-{
-    $resultats = sendQuery("SELECT idRecipients FROM Recipients WHERE MailAddress = :MailAddress ", array("MailAddress"=>$MailAddress));
-    return $resultats;
-}
-
-/**
- * GetMailingListID: This function will be used to get a MailingList ID
- * @param $mailingList
- * @return PDOStatement
- */
-function GetMailingListID($mailingList)
-{
-    $resultats = sendQuery("SELECT idMailingList FROM MailingList WHERE Name  = :name ", array("name"=>$mailingList));
-    return $resultats;
-}
-
-/**
- * createNewShelter: This function will be used to create a new Shelter
- * @param $data
- */
-function createNewShelter($data)
-{
-    extract($data);
-
-    sendQuery("INSERT INTO Shelters (Sheltersname, nbRooms, managerName, KitchenState, HallState, DoorsState, LightsState, Region, Municipalities) VALUES ('".$sheltername."', :nbrooms, :managername, :kitchenstate, :hallstate, :doorsstate, :lightstate, :region, :municipalities);",array("nbrooms" => $nbRooms, "managername" => $managerName,"kitchenstate" => $KitchenState,"hallstate" => $HallState,"doorsstate" => $DoorsState,"lightstate" => $LightsState,"region" => $region,"municipalities" => $municipalities));
-}
-
-/**
- * getAllSheltersName: This function will be used to get All Shelter name from Shelters table
- * @return PDOStatement
- */
-function getAllSheltersName()
-{
-    $resultats = sendQuery("SELECT Sheltersname FROM Shelters");
-
-    return $resultats;
-}
-
-/**
- * getNbRooms: This function will be used to get the number of Rooms by Shelter
- * @param $shelterName
- * @return PDOStatement
- */
-function getNbRooms($shelterName)
-{
-    $resultats = sendQuery("SELECT nbRooms FROM Shelters WHERE Sheltersname = :shelterName",array("shelterName" => $shelterName));
-
-    return $resultats;
-}
-
-/**
- * getNameRooms: This function will be used to get all Rooms name for a selected shelter
- * @param $shelterID
- * @return PDOStatement
- */
-function getNameRooms($shelterID)
-{
-    $resultats = sendQuery("SELECT Name FROM Rooms WHERE Shelters_idShelters = :shelterID",array("shelterID" => $shelterID));
-
-    return $resultats;
-}
-
-/**
- * fillRoomsState: This function will be used to fill the "Rooms" table with all states data
- * @param $lightState
- * @param $doorState
- * @param $Name
- */
-function fillRoomsState($lightState, $doorState, $Name)
-{
-    sendQuery("UPDATE Rooms SET LightState = :lightstate, DoorsState = :doorstate WHERE Name = :name",array("lightstate"=>$lightState, "doorstate"=>$doorState, "name"=>$Name));
-}
-
-/**
- * fillNewRoomState: This function will be used to fill the "Rooms" table with all states data for new shelter's room
- * @param $lightState
- * @param $doorState
- * @param $Name
- * @param $idShelter
- */
-function fillNewRoomState($lightState, $doorState, $Name, $idShelter)
-{
-    sendQuery("INSERT INTO Rooms (Name, LightState, DoorsState, Shelters_idShelters) VALUES ('$Name', $lightState, $doorState, $idShelter);");
-}
-
-/**
- * addRecipient: This function will be used to fill the "Recipients" table
- * @param $recipient
- */
-function addRecipient($recipient)
-{
-    sendQuery("INSERT INTO `Recipients` (`MailAddress`) VALUES ('$recipient');");
-}
-
-/**
- * This function will be used for
- * @param $name
- */
-function addMailingList($name)
-{
-    $result = getUserID($_SESSION["user"]['MailAddress']);
-    $userID = $result->fetch(PDO::FETCH_ASSOC);
-    $userID = $userID["idUsers"];
-
-    sendQuery("INSERT INTO `MailingList` (`Name`, `Users_idUsers`) VALUES ('$name', '$userID');");
-}
-
-/**
- * This function will be used for
- * @param $MailingList
- * @return PDOStatement
- */
-function verifyMailingList($MailingList)
-{
-    $result = getUserID($_SESSION["user"]['MailAddress']);
-    $userID = $result->fetch(PDO::FETCH_ASSOC);
-
-    $results = sendQuery("SELECT `Name` FROM MailingList WHERE `Users_idUsers` = :userid AND Name = :name",array("userid"=> $userID["idUsers"], "name" => $MailingList));
-
-    return $results;
-}
-
-/**
- * This function will be used for
- * @param $Sheltername
- * @return PDOStatement
- */
-function verifyShelterName($Sheltername)
-{
-    $results = sendQuery("SELECT `Sheltersname` FROM Shelters	WHERE `Sheltersname`= :name",array("name"=> $Sheltername));
-
-    return $results;
-}
-
-/**
- * This function will be used for
- * @param $MailAddress
- * @return PDOStatement
- */
-function verifyRecipient($MailAddress)
-{
-    $result = sendQuery("SELECT `MailAddress` FROM Recipients WHERE `MailAddress`= :MailAddress",array("MailAddress" => $MailAddress));
-
-    return $result;
-}
-
-/**
- * This function will be used for
- * @param $idRecipient
- * @param $idMailingList
- */
-function fillRecipientMailingList($idRecipient,$idMailingList)
-{
-    sendQuery("INSERT INTO `Recipients_has_MailingList` (`Recipients_idRecipients`, `MailingList_idMailingList`) VALUES ('$idRecipient', '$idMailingList');");
-}
-
-/**
- * This function will be used for
- * @param $Data
- */
-function addCPAReport($Data)
-{
-    extract($Data);
-
-    // Get user & shelter ID
-    $result = getUserID($_SESSION['user']['MailAddress']);
-    $userID = $result->fetch(PDO::FETCH_ASSOC);
-    $userID = $userID["idUsers"];
-
-    $result = getShelterID($ShelterName);
-    $IDshelter = $result->fetch(PDO::FETCH_ASSOC);
-    $IDshelter = $IDshelter["idShelters"];
-
-    $Date = date("Y-m-d");
-
-
-    sendQuery("INSERT INTO `cpa` (`Pipe`, `Fuses`, `GazFilter`, `Guideline`, `Handwheel`, `SelfReleasing`, `Threshold`, `Comments`, `Users_idUsers`, `Shelters_idShelters`,`Date`) VALUES ($Pipe,$Fuses,$GazFilter,$Guideline,$Handwheel,$SelfReleasing,$Threshold,'$message',$userID,$IDshelter,'$Date');");
-}
-
-/**
- * This function will be used for
- * @param $pass
- * @param $mail
- * @return bool
- */
-function comparePassword($pass,$mail)
-{
-    $result = sendQuery("SELECT Password FROM Users WHERE MailAddress= :mailaddress",array("mailaddress"=>$mail));
-
-    $password = $result->fetch(PDO::FETCH_ASSOC);
-
-    if ($password["Password"] == $pass)
-    {
-        return true;
-    }
-    else return false;
-}
-
-/**
- * This function will be used for
- * @return PDOStatement
- */
-function getAllSheltersState()
-{
-    $result = sendQuery("SELECT KitchenState, HallState, DoorsState, LightsState FROM Shelters");
-
-    return $result;
-}
-
-/**
- * This function will be used for
- * @param $newpass
- * @param $mail
- */
-function changePwd($newpass, $mail)
-{
-    $result = sendQuery("UPDATE Users SET Password = :pass WHERE MailAddress = :mail",array("pass"=>$newpass, "mail"=>$mail));
-}
-
-/**
- * This function will be used for
- * @param $user
- * @return PDOStatement
- */
-function getCPAbyUser($user)
-{
-    $results = getUserID($user);
-    $userID = $results->fetch(PDO::FETCH_ASSOC);
-
-    $results = sendQuery("SELECT Shelters.Sheltersname, CPA.Date, Shelters.Municipalities
-                FROM CPA
-                INNER JOIN Shelters
-                WHERE CPA.Shelters_idShelters = Shelters.idShelters AND CPA.Users_idUsers = :iduser",array("iduser"=>$userID["idUsers"]));
-
-    return $results;
-}
-
-/**
- * This function will be used for
- * @param $name
- * @return PDOStatement
- */
-function getCPAData($name)
-{
-    $results = sendQuery("SELECT `Pipe`,`Fuses`,`GazFilter`,`Guideline`,`Handwheel`,`SelfReleasing`,`Threshold`,`Comments`,CPA.Date,Shelters.managerName FROM CPA INNER JOIN Shelters WHERE CPA.Shelters_idShelters = Shelters.idShelters AND Shelters.Sheltersname =  :name",array("name"=>$name));
-
-    return $results;
-}
-
-/**
- * This function will be used for
- * @param $user
- * @return PDOStatement
- */
-function getMailingListbyUser($user)
-{
-    $results = getUserID($user);
-    $userID = $results->fetch(PDO::FETCH_ASSOC);
-
-    $results = sendQuery("SELECT `Name` FROM MailingList WHERE `Users_idUsers`= :iduser",array("iduser"=>$userID["idUsers"]));
-
-    return $results;
-
-}
-
-/**
- * This function will be used for
- * @param $mailinglist
- * @return PDOStatement
- */
-function getRecipients($mailinglist)
-{
-    $results = sendQuery("SELECT `MailAddress` FROM Recipients INNER JOIN Recipients_has_MailingList INNER JOIN MailingList ON Recipients.idRecipients = Recipients_has_MailingList.Recipients_idRecipients AND MailingList.idMailingList = Recipients_has_MailingList.MailingList_idMailingList WHERE MailingList.Name = :mailinglist",array("mailinglist" => $mailinglist));
-
-    return $results;
-}
-

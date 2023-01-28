@@ -29,6 +29,12 @@ try
 
             case 'reserverVol': reserverVol(); break;
 
+            case 'viewAdmin': viewAdmin(); break;
+
+            case 'viewAddFlight': viewAddFlight(); break;
+
+            case 'createnewflight': createnewflight(); break;
+
             case 'reserveFlight' : reserveFlight(); break;
 
             case 'sliderTest': sliderTest(); break;
