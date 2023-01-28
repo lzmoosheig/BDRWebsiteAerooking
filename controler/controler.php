@@ -22,6 +22,13 @@ stream_context_set_default([
  */
 function home()
 {
+    $result = getAirportName();
+
+    if (!$result) {
+        echo "Une erreur s'est produite.\n";
+        exit;
+    }
+
     require "views/view_home.php";
 }
 
@@ -39,8 +46,32 @@ function signup()
 	require "views/view_signup.php";
 }
 
+function sliderTest()
+{
+    require "views/view_testSlider.php";
+}
+
+function showFlight()
+{
+
+    $result = getallFlight($_POST);
+
+
+
+    require "views/view_showflight.php";
+}
+
 function getflight()
 {
+
+    $airports = getAirportName();
+    $companies = getAllCompanies();
+
+
+    if (!$airports) {
+        echo "Une erreur s'est produite.\n";
+        exit;
+    }
 	require "views/view_flight.php";
 }
 
@@ -107,6 +138,16 @@ function signin()
             header("location:index.php?action=login&errLogin=true&qMail=$username");
         }
     }
+}
+
+function reserveFlight()
+{
+    makeReservation($_POST);
+    require "views/view_res.php";
+}
+function reserverVol()
+{
+    require "views/view_reservation.php";
 }
 
 /**

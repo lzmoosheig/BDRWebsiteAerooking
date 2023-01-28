@@ -7,15 +7,20 @@
  */
 
 /**
- * getBD: This function will be used to connect to the local DB: "CPA_Portal_DB"
- * @return PDO
+ * getBD: This function will be used to connect to the local DB: "testBDR"
+ * @return false|PDO|resource
  */
 function getBD()
 {
     // Connect to local DB
-    $connexion = new PDO("mysql:host=localhost:3308;dbname=CPA_Portal_DB", "cpa_web", "CPA_Web_Portal_2020");
 
-    return $connexion;
+    $db_connection = pg_connect("host=localhost dbname=testBDR user=postgres password=");
+    if ($db_connection) {
+        echo 'Connection attempt succeeded.';
+    } else {
+        echo 'Connection attempt failed.';
+    }
+    return $db_connection;
 }
 
 /**
@@ -28,13 +33,44 @@ function sendQuery(string $query, $args = array())
 {
     $dataBase = getBD();
 
-    $prepareQuery = $dataBase->prepare($query);
-    $prepareQuery->execute($args);
+    // It's better to make prepared queries but it doesn't work atm
 
-    $result = $prepareQuery;
+    //$prepareQuery = $dataBase->pg_prepare($dataBase,"my_query",$query);
+    //$prepareQuery->pg_execute($dataBase, "my_query",array());
+
+
+    $result = pg_query($dataBase, $query);
+
+    //$result = $prepareQuery;
     return $result;
 
 }
+
+/* Multiple queries in one statement example
+ *
+ *
+ *
+ * $sql = "SELECT * FROM table1; SELECT * FROM table2;";
+
+if (mysqli_multi_query($conn, $sql)) {
+    do {
+
+if ($result = mysqli_store_result($conn)) {
+    while ($row = mysqli_fetch_row($result)) {
+        printf("%s\n", $row[0]);
+    }
+    mysqli_free_result($conn);
+}
+
+if (mysqli_more_results($conn)) {
+    printf("-----------------\n");
+}
+} while (mysqli_next_result($conn));
+}
+ *
+ *
+ *
+ * */
 
 /**
  * getUser: This function will be used for getting User's pwd and mail address
@@ -46,6 +82,51 @@ function getUser($mail)
     $user = sendQuery("SELECT Password, MailAddress FROM users WHERE MailAddress=:mailCheck", array("mailCheck"=>$mail));
 
     return $user;
+}
+
+function makeReservation($resdata)
+{
+    extract($resdata);
+
+    // TODO
+
+}
+
+function getAirportName()
+{
+    $airportsInfo = sendQuery("SELECT Aéroport.nom, Aéroport.diminutif, Aéroport.nomville, Pays.nom from aéroport 
+INNER JOIN ville on Aéroport.nomville = Ville.nom INNER JOIN Pays on Ville.codepays = Pays.codealpha3  ");
+    return $airportsInfo;
+}
+
+function getallFlight($aeroport)
+{
+    extract($aeroport);
+
+    $string = "";
+
+    foreach ($depart as &$value)
+    {
+        $string = $string.$value.',';
+    }
+
+    $string = rtrim($string, ',');
+
+    echo $string;
+
+    $query = "SELECT aéroport.diminutif, vol.nomaéroportdépart, vol.nomaéroportarrivée, compagnie.nom as Compagnie, vol.dateetheurededépart, vol.dateetheuredarrivée, vol.prix
+ FROM vol inner join avion on vol.idavion = avion.id inner join compagnie on avion.nomcompagnie = compagnie.nom 
+ inner join aéroport on vol.nomaéroportdépart = aéroport.nom
+ WHERE aéroport.diminutif = ANY("."'{".$string."}'".")";
+
+    echo $query;
+
+
+
+    $flightsInfo = sendQuery($query);
+
+
+    return $flightsInfo;
 }
 
 function createUser($userData)
@@ -89,6 +170,13 @@ function compareMail($mailCheck)
 function getUserID($username)
 {
     $resultat = sendQuery("SELECT idUsers FROM users WHERE MailAddress = :username",array("username"=>$username));
+
+    return $resultat;
+}
+
+function getAllCompanies()
+{
+    $resultat = sendQuery("SELECT * FROM compagnie");
 
     return $resultat;
 }

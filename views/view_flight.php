@@ -191,16 +191,28 @@ ob_start();
 [disabled].noUi-origin,[disabled] .noUi-handle {
     cursor: not-allowed;
 }
+
+th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #09034a;
+    color: white;
+}
+
+tr.spaceUnder>td {
+    padding-bottom: 1em;
+}
+
 </style>
 
 <!-- CONTENT -->
 <div class="section-center">
     <div class="container" style="margin-top: 200px">
         <div class="row">
-
             <!-- Type de trajet, classes et bagages -->
             <div class="booking-form">
-                <form action="index.php?action=getFlight" method="post">
+                <form action="index.php?action=showFlight" method="post">
                     <div class="row">
                         <!-- Type de trajet -->
                         <div class="col-md-3">
@@ -214,7 +226,7 @@ ob_start();
                         <!-- Classes -->
                         <div class="col-md-3">
                             <label for="allerRetour"> Classe:</label>
-                            <select name="allerRetour"  id="allerRetour" class="dropdownStyle">
+                            <select name="classe"  id="classe" class="dropdownStyle">
                                 <option value="economy"> Economie</option>
                                 <option value="premiumeconomy"> Economie Premium </option>
                                 <option value="business"> Affaire </option>
@@ -224,52 +236,39 @@ ob_start();
 
                         <!-- Bagages -->
                         <div class="col-md-3">
-                            <label for="allerRetour"> Bagages:</label>
+                            <label for="nbBagages"> Bagages:</label>
                             <div class="dropdown">
                                 <input type="text" id="droptxt" class="list" readonly/>
                                 <div id="content" class="content">
                                     <div class="list">
-                                        <input type="checkbox" id="aMain" class="list" value="aMain" />
+                                        <input type="checkbox" id="aMain" class="list" value="à main" />
                                         <label for="aMain" class="list">A main </label>
-                                        <input type="hidden" class="list quantity" min="1" value="1" />
+                                        <input type="hidden" class="list quantity" min="1" value="1" name="nbBagMain" />
                                     </div>
 
                                     <div class="list">
-                                        <input type="checkbox" id="enSoute" class="list" value="enSoute" />
+                                        <input type="checkbox" id="enSoute" class="list" value="en soute"/>
                                         <label for="enSoute" class="list">En soute </label>
-                                        <input type="hidden" class="list quantity" min="1" value="1" />
+                                        <input type="hidden" class="list quantity" min="1" value="1" name="nbBagSoute" />
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     <br/>
 
                     <!-- Départ arrivé -->
                     <div class="row">
-
                         <!-- Départ -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <H1>Départ</H1>
-                                <select name="depart" id="depart" multiple multiselect-search="true" multiselect-select-all="false" multiselect-max-items="3" onchange="console.log(this.selectedOptions)" style="max-width:90%" class="form-control" required>
-                                    <option value="CDG"<?php if (isset($_POST['depart']) && $_POST['depart']=="CDG") echo "selected";?>>Charles de Gaulle (Paris, France)</option>
-                                    <option value="ORY">Orly (Paris, France)</option>
-                                    <option value="JFK">John F. Kennedy (New York, États-Unis)</option>
-                                    <option value="LGA">LaGuardia (New York, États-Unis)</option>
-                                    <option value="LHR">Heathrow (Londres, Royaume-Uni)</option>
-                                    <option value="LGW">Gatwick (Londres, Royaume-Uni)</option>
-                                    <option value="NRT">Narita (Tokyo, Japon)</option>
-                                    <option value="HND">Haneda (Tokyo, Japon)</option>
-                                    <option value="GRU">Guarulhos (Sao Paulo, Brésil)</option>
-                                    <option value="SYD">Sydney (Sydney, Australie)</option>
-                                    <option value="DXB">Dubaï (Dubaï, Émirats Arabes Unis)</option>
-                                    <option value="IST">Atatürk (Istanbul, Turquie)</option>
-                                    <option value="SAW">Sabiha Gökçen (Istanbul, Turquie)</option>
-                                    <option value="PVG">Pudong (Shanghai, Chine)</option>
-                                    <option value="SHA">Hongqiao (Shanghai, Chine)</option>
-                                    <option value="YYZ">Pearson International (Toronto, Canada)</option>
+                                <select name="depart[]" id="depart" multiple multiselect-search="true" multiselect-select-all="false" multiselect-max-items="3" onchange="console.log(this.selectedOptions)" style="max-width:90%" class="form-control" required>
+                                    <?php
+                                    while ($row = pg_fetch_row($airports)) {
+                                        echo "<option value=".$row[1].">".$row[0]." (". $row[2].", ".$row[3].")"."</option>";
+                                    }
+                                    ?>
                                 </select>
                             </div>
                         </div>
@@ -278,23 +277,15 @@ ob_start();
                         <div class="col-md-6">
                             <div class="form-group">
                                 <H1>Arrivé</H1>
-                                <select name="arrive" id="arrive" multiple multiselect-search="true" multiselect-select-all="false" multiselect-max-items="3" onchange="console.log(this.selectedOptions)" style="max-width:90%" class="form-control" required>
-                                    <option value="CDG">Charles de Gaulle (Paris, France)</option>
-                                    <option value="ORY">Orly (Paris, France)</option>
-                                    <option value="JFK">John F. Kennedy (New York, États-Unis)</option>
-                                    <option value="LGA">LaGuardia (New York, États-Unis)</option>
-                                    <option value="LHR">Heathrow (Londres, Royaume-Uni)</option>
-                                    <option value="LGW">Gatwick (Londres, Royaume-Uni)</option>
-                                    <option value="NRT">Narita (Tokyo, Japon)</option>
-                                    <option value="HND">Haneda (Tokyo, Japon)</option>
-                                    <option value="GRU">Guarulhos (Sao Paulo, Brésil)</option>
-                                    <option value="SYD">Sydney (Sydney, Australie)</option>
-                                    <option value="DXB">Dubaï (Dubaï, Émirats Arabes Unis)</option>
-                                    <option value="IST">Atatürk (Istanbul, Turquie)</option>
-                                    <option value="SAW">Sabiha Gökçen (Istanbul, Turquie)</option>
-                                    <option value="PVG">Pudong (Shanghai, Chine)</option>
-                                    <option value="SHA">Hongqiao (Shanghai, Chine)</option>
-                                    <option value="YYZ">Pearson International (Toronto, Canada)</option>
+                                <select name="arrive[]" id="arrive" multiple multiselect-search="true" multiselect-select-all="false" multiselect-max-items="3" onchange="console.log(this.selectedOptions)" style="max-width:90%" class="form-control" required>
+                                    <?php
+
+                                    pg_result_seek($airports, 0);
+
+                                    while ($row = pg_fetch_row($airports)) {
+                                        echo "<option value=".$row[1].">".$row[0]."(". $row[2].", ".$row[3].")"."</option>";
+                                    }
+                                    ?>
                                 </select>
                             </div>
                         </div>
@@ -306,7 +297,7 @@ ob_start();
                         <div class="col-md-6">
                             <div class="form-group">
                                 <span class="form-label">Departing</span>
-                                <input class="form-control" type="date" required/>
+                                <input class="form-control" type="date" name="dateDepart" required/>
                             </div>
                         </div>
 
@@ -314,60 +305,29 @@ ob_start();
                         <div class="col-md-6">
                             <div class="form-group">
                                 <span class="form-label">Returning</span>
-                                <input class="form-control" type="date" required/>
+                                <input class="form-control" type="date" name="dateArrivée" required/>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Afficher les vols -->
-                    <div class="form-btn">
-                        <button class="submit-btn">Show flights</button>
-                    </div>
+
 
                     <!-- Affichage des filtres -->
                     <div class="row">
-                        <h1> Voici la liste des vols disponible selon les critères: </h1><br>
+                        <span><br></span>
                         <h3><b> Filtrer: </b></h3>
                         <h4> Par prix: </h4><br>
-
-                        <!-- Fourchette de prix -->
-                        <div class="row-md-12">
-                            <div class="col-md-4">
-                                <h4> Fourchette: </h4>
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div id="slider-range"></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row slider-labels">
-                                        <div class="col-xs-6 caption">
-                                            <strong>Min:</strong> <span id="slider-range-value1"></span>
-                                        </div>
-                                        <div class="col-xs-6 text-right caption">
-                                            <strong>Max:</strong> <span id="slider-range-value2"></span>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <form>
-                                                <input type="hidden" name="min-value" value="">
-                                                <input type="hidden" name="max-value" value="">
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
+                        <div class="col-md-2">
+                            <input type="number" name="prixMax" placeholder="Entrer le prix maximum">
+                        </div>
                             <!-- Croissant / décroissant -->
                             <div class="col-md-2">
                                 <label class="container">Croissant
-                                    <input type="radio" checked="checked" name="radio">
+                                    <input type="radio" checked="checked" name="ordre" value="ASC">
                                     <span class="checkmark"></span>
                                 </label>
                                 <label class="container">Décroissant
-                                    <input type="radio" name="radio">
+                                    <input type="radio" name="ordre" value="DESC">
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
@@ -376,13 +336,14 @@ ob_start();
                             <h4> Par compagnie: </h4>
                             <div class="col-md-2">
                                 <select name="compagnie"  id="compagnie" class="dropdownStyle">
-                                    <option value="swissair"> Swiss Air</option>
-                                    <option value="airfrance"> Air france </option>
-                                    <option value="skyexpress"> Sky Express </option>
-                                    <option value="sunexpress"> Sun Express </option>
+                                <?php
+                                while ($row = pg_fetch_row($companies)) {
+                                    echo '<option value="'.$row[0].'">'.$row[0].'</option>';
+
+                                }
+                                ?>
                                 </select>
                             </div>
-                        </div>
                     </div>
 
                     <div class="row">
@@ -394,26 +355,27 @@ ob_start();
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <input type="checkbox" id="direct" name="direct" checked/>
+                                                    <input type="radio" id="direct" name="escale" value="direct" checked/>
                                                     <label for="direct">Vol direct</label>
                                                 </td>
                                             </tr>
 
                                             <tr>
                                                 <td>
-                                                    <input type="checkbox" id="onestopover" name="onestopover"/>
+                                                    <input type="radio" id="onestopover" name="escale" value="one"/>
                                                     <label for="onestopover">Une escale</label>
                                                 </td>
                                             </tr>
 
                                             <tr>
                                                 <td>
-                                                    <input type="checkbox" id="twostopover" name="twostopover"/>
-                                                    <label for="twostopover">Deux escales</label>
+                                                    <input type="radio" id="twostopover" name="escale" value="twoormore"/>
+                                                    <label for="twostopover">Deux escales ou plus</label>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
+                                                    <span><br></span>
                                                     <h4> Temps de voyage: </h4>
                                                     <input type="number" id="tempsvoyage" name="tempsvoyage" step="1" placeholder="Nombre d'heures max"/>
                                                 </td>
@@ -423,9 +385,18 @@ ob_start();
                                 </tr>
                             </table>
                         </div>
-                        <!-- COLLER LE CODE ICI -->
+                    </div>
+                    <span><br></span>
+                    <div class="row">
+                        <div class="form-btn">
+                            <button class="submit-btn">Show flights</button>
+                        </div>
                     </div>
                 </form>
+                    <!-- Pour tester -->
+                <!-- Afficher les vols -->
+
+
             </div>
         </div>
         <br>
@@ -470,16 +441,17 @@ function calc() {
 }
 </script>
 
+<!--
 <script>
 const rangeInput = document.querySelectorAll(".range-input input"),
     priceInput = document.querySelectorAll(".price-input input"),
     range = document.querySelector(".slider .progress");
-let priceGap = 1000;
+let priceGap = 100;
 
 priceInput.forEach((input) => {
     input.addEventListener("input", (e) => {
-        let minPrice = parseInt(priceInput[0].value),
-            maxPrice = parseInt(priceInput[1].value);
+        let minPrice = parseInt(10),
+            maxPrice = parseInt(30000);
 
         if (maxPrice - minPrice >= priceGap && maxPrice <= rangeInput[1].max) {
             if (e.target.className === "input-min") {
@@ -495,8 +467,8 @@ priceInput.forEach((input) => {
 
 rangeInput.forEach((input) => {
     input.addEventListener("input", (e) => {
-        let minVal = parseInt(rangeInput[0].value),
-            maxVal = parseInt(rangeInput[1].value);
+        let minVal = parseInt(10),
+            maxVal = parseInt(30000);
 
         if (maxVal - minVal < priceGap) {
             if (e.target.className === "range-min") {
@@ -512,7 +484,7 @@ rangeInput.forEach((input) => {
         }
     });
 });
-</script>
+</script>-->
 
 <script src="jquery-3.6.3.min.js" ></script>
 <script src="priceSlider.js" ></script>

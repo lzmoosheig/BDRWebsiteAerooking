@@ -24,6 +24,14 @@ try
             case 'signupDb' : signupDb(); break;
 
             case 'signin': signin(); break;
+
+            case 'showFlight': showFlight(); break;
+
+            case 'reserverVol': reserverVol(); break;
+
+            case 'reserveFlight' : reserveFlight(); break;
+
+            case 'sliderTest': sliderTest(); break;
 			
 			case 'getFlight' : getflight(); break;
 

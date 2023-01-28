@@ -36,46 +36,27 @@ ob_start();
 								<div class="form-group">
 									<H1>Départ</H1>
 										<select name="depart" id="depart" multiple multiselect-search="true" multiselect-select-all="false" multiselect-max-items="3" onchange="console.log(this.selectedOptions)" style="max-width:90%" class="form-control" required>
-										  <option value="CDG">Charles de Gaulle (Paris, France)</option>
-										  <option value="ORY">Orly (Paris, France)</option>
-										  <option value="JFK">John F. Kennedy (New York, États-Unis)</option>
-										  <option value="LGA">LaGuardia (New York, États-Unis)</option>
-										  <option value="LHR">Heathrow (Londres, Royaume-Uni)</option>
-										  <option value="LGW">Gatwick (Londres, Royaume-Uni)</option>
-										  <option value="NRT">Narita (Tokyo, Japon)</option>
-										  <option value="HND">Haneda (Tokyo, Japon)</option>
-										  <option value="GRU">Guarulhos (Sao Paulo, Brésil)</option>
-										  <option value="SYD">Sydney (Sydney, Australie)</option>
-										  <option value="DXB">Dubaï (Dubaï, Émirats Arabes Unis)</option>
-										  <option value="IST">Atatürk (Istanbul, Turquie)</option>
-										  <option value="SAW">Sabiha Gökçen (Istanbul, Turquie)</option>
-										  <option value="PVG">Pudong (Shanghai, Chine)</option>
-										  <option value="SHA">Hongqiao (Shanghai, Chine)</option>
-										  <option value="YYZ">Pearson International (Toronto, Canada)</option>
-									</select>	
+                                            <?php
+                                            while ($row = pg_fetch_row($result)) {
+                                                echo "<option value=".$row[1].">".$row[0]." (". $row[2].", ".$row[3].")"."</option>";
+                                            }
+                                            ?>
+									    </select>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
 									<H1>Arrivé</H1>
-									<select name="arrive" id="arrive" multiple multiselect-search="true" multiselect-select-all="false" multiselect-max-items="3" onchange="console.log(this.selectedOptions)" style="max-width:90%" class="form-control" required>
-										  <option value="CDG">Charles de Gaulle (Paris, France)</option>
-										  <option value="ORY">Orly (Paris, France)</option>
-										  <option value="JFK">John F. Kennedy (New York, États-Unis)</option>
-										  <option value="LGA">LaGuardia (New York, États-Unis)</option>
-										  <option value="LHR">Heathrow (Londres, Royaume-Uni)</option>
-										  <option value="LGW">Gatwick (Londres, Royaume-Uni)</option>
-										  <option value="NRT">Narita (Tokyo, Japon)</option>
-										  <option value="HND">Haneda (Tokyo, Japon)</option>
-										  <option value="GRU">Guarulhos (Sao Paulo, Brésil)</option>
-										  <option value="SYD">Sydney (Sydney, Australie)</option>
-										  <option value="DXB">Dubaï (Dubaï, Émirats Arabes Unis)</option>
-										  <option value="IST">Atatürk (Istanbul, Turquie)</option>
-										  <option value="SAW">Sabiha Gökçen (Istanbul, Turquie)</option>
-										  <option value="PVG">Pudong (Shanghai, Chine)</option>
-										  <option value="SHA">Hongqiao (Shanghai, Chine)</option>
-										  <option value="YYZ">Pearson International (Toronto, Canada)</option>
-									</select>	
+                                    <select name="arrive" id="arrive" multiple multiselect-search="true" multiselect-select-all="false" multiselect-max-items="3" onchange="console.log(this.selectedOptions)" style="max-width:90%" class="form-control" required>
+                                        <?php
+
+                                        pg_result_seek($result, 0);
+
+                                        while ($row = pg_fetch_row($result)) {
+                                            echo "<option value=".$row[1].">".$row[0]."(". $row[2].", ".$row[3].")"."</option>";
+                                        }
+                                        ?>
+                                    </select>
 								</div>
 							</div>
 							</div>							
@@ -83,13 +64,13 @@ ob_start();
 									<div class="col-md-6">
 										<div class="form-group">
 											<span class="form-label">Departing</span>
-												<input class="form-control" type="date" required>
+												<input class="form-control" type="date" name="departureDate" id="departureDate" required>
 										</div>
 									</div>
 								<div class="col-md-6">
 									<div class="form-group">
 										<span class="form-label">Returning</span>
-											<input class="form-control" type="date" required>
+											<input class="form-control" type="date" name="returningDate" required>
 									</div>
 								</div>
 							</div>
