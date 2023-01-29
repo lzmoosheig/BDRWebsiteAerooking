@@ -78,7 +78,7 @@ ob_start();
 						<div class="wrap-login100-form-btn">
 							<div class="login100-form-bgbtn"></div>
 							<button class="login100-form-btn">
-								Login
+								Create Account
 							</button>
 						</div>
 					</div>

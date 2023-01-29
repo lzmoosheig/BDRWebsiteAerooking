@@ -18,11 +18,6 @@ stream_context_set_default([
     ]);
 
 
-function signup()
-{
-	require "views/view_signup.php";
-}
-
 function sliderTest()
 {
     require "views/view_testSlider.php";
@@ -44,6 +39,16 @@ function resDetails()
     require "views/view_resDetails.php";
 }
 
+function signupView()
+{
+    if(!isset($_SESSION['user']))
+    {
+        require "views/view_signup.php";
+    } else {
+        require "views/view_flight.php";
+    }
+}
+
 function showFlight()
 {
     $allflight = getallFlight($_POST);
@@ -52,9 +57,6 @@ function showFlight()
 
 function viewAdmin()
 {
-
-    $allFlight = getAllFlightAdmin();
-
     if(isset($_SESSION['user']) && $_SESSION['user'] == "admin@aeroking.com")
     {
         require "views/view_admin.php";
@@ -62,6 +64,12 @@ function viewAdmin()
         require "views/view_flight.php";
     }
 
+}
+
+function viewAllFlights()
+{
+    $allFlight = getAllFlightAdmin();
+    require "views/view_allFlight.php";
 }
 
 function getflight()
@@ -103,11 +111,11 @@ function login()
 
 function signupDb()
 {
+    signUP($_POST);
     extract($_POST);
-    // $email & $pswd
-    // Query à la DB pour insert le password et le mail
-    // INSERT INTO compte (mail,motdepasse) VALUES ($email,$pswd);
 
+    $_SESSION['user'] = $email;
+    header("location:index.php?action=getFlight");
 
 }
 
@@ -130,7 +138,7 @@ function signin()
 
             if(empty($userinformation))
             {
-            header("location:index.php?action=login&errLogin=true");
+                header("location:index.php?action=login&errLogin=true");
             }
 
             while ($row = pg_fetch_row($userinformation)) {
@@ -150,10 +158,11 @@ function signin()
 
 function reserveFlight()
 {
+    if(isset($_SESSION['user'])) {
+        makeReservation($_SESSION['post-data'], $_POST);
 
-    makeReservation($_SESSION['post-data'], $_POST);
-
-    require "views/view_res.php";
+        require "views/view_res.php";
+    }
 }
 function reserverVol()
 {
@@ -171,4 +180,16 @@ function logout()
     }
 
     header("location:index.php?action=getFlight");
+}
+
+function supprimerVol()
+{
+    if(isset($_SESSION['user']) && $_SESSION['user'] == "admin@aeroking.com")
+    {
+        deleteFlight();
+
+        header("location:index.php?action=viewAdmin&volSupprime=success");
+    } else {
+        header("location:index.php?action=getFlight");
+    }
 }

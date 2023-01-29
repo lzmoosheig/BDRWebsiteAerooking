@@ -14,7 +14,7 @@ function getBD()
 {
     // Connect to local DB
 
-    $db_connection = pg_connect("host=localhost dbname= user=postgres password=");
+    $db_connection = pg_connect("host=localhost dbname=testBDR user=postgres password=Coclove22");
 
     return $db_connection;
 }
@@ -285,3 +285,19 @@ function getAllFlightAdmin()
     return $res;
 
 }
+
+function deleteFlight()
+{
+    $id = $_GET['idVol'];
+    $query = "DELETE FROM vol where id =".$id;
+    sendQuery($query);
+}
+
+function signUP($userdata)
+{
+    extract($userdata);
+    $query = "INSERT INTO compte (mail,motdepasse) VALUES ("."'$email'".","."'$pswd'".")";
+    sendQuery($query);
+}
+
+

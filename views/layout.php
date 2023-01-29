@@ -69,7 +69,7 @@
                 </li>
                 <li class="nav-item">
                     <?php if (isset($_SESSION['user'])){
-                        echo "<a class=\"nav-link page-scroll\" href=\"index.php?action=myaccount\">MY ACCOUNT</a>";
+                        if($_SESSION['user'] != "admin@aeroking.com") echo "<a class=\"nav-link page-scroll\" href=\"index.php?action=myaccount\">MY ACCOUNT</a>";
                         echo "<a class=\"nav-link page-scroll\" href=\"index.php?action=logout\">LOGOUT</a>";
                         if($_SESSION['user'] == "admin@aeroking.com") echo "<a class=\"nav-link page-scroll\" href=\"index.php?action=viewAdmin\">ADMIN PANEL</a>";
 

@@ -211,24 +211,21 @@ ob_start();
         <div class="container" style="margin-top: 200px">
             <div class="row">
                 <!-- Type de trajet, classes et bagages -->
-                <div class="booking-form">
+                <div class="booking-form" style="margin-top: 20%">
                     <h1> Panel administrateur </h1>
 
-                    <a class="btn" href="index.php?action=viewAdmin&mode=compagnie"> Afficher les vols par compagnie</a>
+                    <a class="btn" href="index.php?action=viewAllFlights"> Afficher tout les vols</a>
                     <a class="btn" href="index.php?action=viewAddFlight"> Ajouter un vol</a>
 
-
-                    <div class="row">
-
-                    </div>
-
+                    <?php
+                    if(isset($_GET['volSupprime']) && $_GET['volSupprime'] == "success")
+                        echo "<script> alert(\"Le vol a été supprimé\"); </script> "
+                    ?>
                 </div>
             </div>
             <br>
         </div>
     </div>
-
-
 </div>
 
 <?php $contenu = ob_get_clean(); // Stocke la page dans la variable

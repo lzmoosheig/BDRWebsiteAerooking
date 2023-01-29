@@ -17,7 +17,7 @@ try
         {
             case 'login': login(); break;
 			
-			case 'signup' : signup(); break;
+			case 'signup' : signupView(); break;
 
             case 'signupDb' : signupDb(); break;
 
@@ -31,11 +31,13 @@ try
 
             case 'viewAddFlight': viewAddFlight(); break;
 
+            case 'viewAllFlights': viewAllFlights(); break;
+
+            case 'supprimerVol': supprimerVol(); break;
+
             case 'myaccount': myaccount(); break;
 
             case 'resDetails': resDetails(); break;
-
-            case 'createPassengers': createPassengers(); break;
 
             case 'createnewflight': createnewflight(); break;
 

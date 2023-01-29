@@ -212,68 +212,61 @@ ob_start();
             <div class="row">
                 <!-- Type de trajet, classes et bagages -->
                 <div class="booking-form">
-                    <form action="index.php?action=createnewflight" method="post">
-                    <h1> Ajout d'un vol </h1>
-                    <br>
-                    <div class="col-md-6">
-                    <H3>Départ</H3>
-                        <select name="depart" required>
-                            <?php
-                            while ($row = pg_fetch_row($airports)) {
-                                echo "<option value=".$row[1].">".$row[0]." (". $row[2].", ".$row[3].")"."</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-
-                    <div class="col-md-6">
-                        <H3>Arrivée</H3>
-                        <select name="arrive" required>
-                            <?php
-
-                            pg_result_seek($airports, 0);
-
-                            while ($row = pg_fetch_row($airports)) {
-                                echo "<option value=".$row[1].">".$row[0]." (". $row[2].", ".$row[3].")"."</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <span><br></span>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="dateHeureDepart">Date et heure de départ</label>
-                            <input type="datetime-local" name="dateheureDepart" id="dateHeureDepart">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="dateHeureDepart">Date et heure d'arrivée</label>
-                            <input type="datetime-local" name="dateheureArrive" id="dateHeureDarrive">
-                        </div>
-                    </div>
-                    <span><br></span>
-                    <div class="row">
-                        <h4>ID de l'avion: </h4>
-                        <div class="col-md-2">
-                            <input type="number" name="idAvion">
-                        </div>
-                    </div>
-                        <span><br></span>
+                    <form action="index.php?action=reserverVol" method="post">
+                        <!-- Liste des vols -->
                         <div class="row">
-                            <div class="form-btn">
-                                <button class="submit-btn">Create flight</button>
-                            </div>
+                            <span><br></span>
+                            <br><h1> Voici la liste des vols disponible selon les critères: </h1><br>
                         </div>
+
+                        <div class="row" style="margin-left: 5%;margin-right: 5%">
+                            <span><br></span>
+                            <table>
+                                <tr class="spaceUnder">
+                                    <th>ID Vol</th>
+                                    <th>ID Avion</th>
+                                    <th>Aéroport(s) de départ</th>
+                                    <th>Aéroport(s) d'arrivée</th>
+                                    <th>Heure de départ</th>
+                                    <th>Heure d'arrivée</th>
+                                    <th>Prix</th>
+                                    <th>Poids max bagages en soute</th>
+                                    <th></th>
+                                </tr>
+
+
+                                <?php
+
+                                while ($row = pg_fetch_row($res)) {
+                                    echo "<tr class=\"spaceUnder\">
+                                        <td>".$row[0]."</td>
+                                        <td><input type=\"number\" value=\"$row[1]\">"."
+                                        </td>
+                                        <td>'.$row[1].'</td>
+                                        <td>'.$row[2].'</td>
+                                        <td>'.$row[5].'</td>
+                                        <td>'.$row[8].'</td>
+                                        <td>'.$row[9].'</td>
+                                        </td>
+                                    </tr>";
+                                }
+                                ?>
+                            </table>
+                        </div>
+                        <!-- Pour tester -->
+                        <!-- Afficher les vols -->
+
                     </form>
                 </div>
             </div>
             <br>
         </div>
     </div>
+
+
 </div>
 
 <?php $contenu = ob_get_clean(); // Stocke la page dans la variable
 require "layout.php";
 ?>
-
 
