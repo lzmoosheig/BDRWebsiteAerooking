@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  postgresql:
+    build: './'
+    container_name: aerooking-db
+    environment:
+      - POSTGRESQL_USERNAME=bdr
+      - POSTGRESQL_PASSWORD=bdr
+      - POSTGRESQL_DATABASE=bdr
+      - POSTGRESQL_POSTGRES_PASSWORD=root
+    ports:
+      - 5432:5432
+  php:
+    build: '../'
+    ports:
+      - 80:80
+    container_name: aerooking-php
+    volumes: 
+      - ../:/var/www/html
