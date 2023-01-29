@@ -7,14 +7,14 @@
  */
 
 /**
- * getBD: This function will be used to connect to the local DB: "testBDR"
+ * getBD: This function will be used to connect to the local DB
  * @return false|PDO|resource
  */
 function getBD()
 {
     // Connect to local DB
 
-    $db_connection = pg_connect("host=localhost dbname=testBDR user=postgres password=Coclove22");
+    $db_connection = pg_connect("host=postgresql dbname=bdr user=bdr password=bdr");
 
     return $db_connection;
 }
