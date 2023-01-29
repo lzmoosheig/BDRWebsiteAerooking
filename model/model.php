@@ -20,7 +20,7 @@ function getBD()
 }
 
 /**
- * sendQuery: This function will be used for every SQL request (Secured)
+ * sendQuery: This function will be used for every SQL request
  * @param $query - request
  * @param array $args - all args in array to avoid ' & " issues
  * @return PDOStatement
@@ -28,45 +28,10 @@ function getBD()
 function sendQuery(string $query, $args = array())
 {
     $dataBase = getBD();
-
-    // It's better to make prepared queries but it doesn't work atm
-
-    //$prepareQuery = $dataBase->pg_prepare($dataBase,"my_query",$query);
-    //$prepareQuery->pg_execute($dataBase, "my_query",array());
-
-
     $result = pg_query($dataBase, $query);
-
-    //$result = $prepareQuery;
     return $result;
-
 }
 
-/* Multiple queries in one statement example
- *
- *
- *
- * $sql = "SELECT * FROM table1; SELECT * FROM table2;";
-
-if (mysqli_multi_query($conn, $sql)) {
-    do {
-
-if ($result = mysqli_store_result($conn)) {
-    while ($row = mysqli_fetch_row($result)) {
-        printf("%s\n", $row[0]);
-    }
-    mysqli_free_result($conn);
-}
-
-if (mysqli_more_results($conn)) {
-    printf("-----------------\n");
-}
-} while (mysqli_next_result($conn));
-}
- *
- *
- *
- * */
 
 /**
  * getUser: This function will be used for getting User's pwd and mail address
@@ -76,18 +41,21 @@ if (mysqli_more_results($conn)) {
 function getUser($mail)
 {
     $user = sendQuery("SELECT mail, motdepasse FROM Compte WHERE mail ="."'$mail'");
-
     return $user;
 }
 
+/**
+ * makeReservation: This function will be used to make a flight reservation
+ * @param $resdata
+ * @param $passengerInfos
+ * @return void
+ */
 function makeReservation($resdata, $passengerInfos)
 {
     extract($resdata);
     extract($passengerInfos);
 
     $flag = 'FALSE';
-
-    // $nbBagMain, $nbBagSoute, $allerRetour
 
     if($allerRetour != "simple")
     {
@@ -116,9 +84,12 @@ function makeReservation($resdata, $passengerInfos)
             $query = $query."INSERT INTO Classe_Réservation (nomclasse, idréservation, places) VALUES ("."'$classe'".", (select MAX(id) from Réservation), $counterPassenger)";
 
     sendQuery($query);
-
 }
 
+/**
+ * getAirportName: This function will be used to get all airports name
+ * @return PDOStatement
+ */
 function getAirportName()
 {
     $airportsInfo = sendQuery("SELECT Aéroport.nom, Aéroport.diminutif, Aéroport.nomville, Pays.nom from aéroport 
@@ -126,6 +97,10 @@ INNER JOIN ville on Aéroport.nomville = Ville.nom INNER JOIN Pays on Ville.code
     return $airportsInfo;
 }
 
+/**
+ * getReservation: This function will be used to get all reservation for one account
+ * @return PDOStatement
+ */
 function getReservation()
 {
     if(isset($_SESSION['user'])) {
@@ -147,11 +122,14 @@ function getReservation()
     return $result;
 }
 
+/**
+ * getPassengerFromRes: This function will be used to get all passengers from one reservation
+ * @return PDOStatement
+ */
 function getPassengerFromRes()
 {
     $idRes = $_GET['idRes'];
     $mail = $_SESSION['user'];
-
 
     $query = "SELECT \"Nom\",\"Prénom\",\"ClasseDeVol\"
                 FROM vRéservations
@@ -164,6 +142,10 @@ function getPassengerFromRes()
     return $res;
 }
 
+/**
+ * getMultipleFlight: This function will be used to get composed flight (with stepovers)
+ * @return PDOStatement
+ */
 function getMultipleFlight()
 {
     $idRes = $_GET['idRes'];
@@ -182,9 +164,13 @@ GROUP BY \"NombreDePlacesRéservées\",
 
     $res = sendQuery($query);
     return $res;
-
 }
 
+/**
+ * getallFlight: This function will be used to get all flights (for admin view)
+ * @param $aeroport
+ * @return PDOStatement
+ */
 function getallFlight($aeroport)
 {
     extract($aeroport);
@@ -224,14 +210,15 @@ function getallFlight($aeroport)
 
     }
 
-
     $flightsInfo = sendQuery($query);
-
-
     return $flightsInfo;
 }
 
-
+/**
+ * createFlight: This function will be used to create a new flight
+ * @param $flightInfo
+ * @return void
+ */
 function createFlight($flightInfo)
 {
     extract($flightInfo);
@@ -239,13 +226,16 @@ function createFlight($flightInfo)
     $dateheureDepart =  str_replace("T"," ",$dateheureDepart);
     $dateheureArrive =  str_replace("T"," ",$dateheureArrive);
 
-
     $query = "INSERT INTO Vol (idAvion, nomAéroportDépart, nomVilleAéroportDépart, codePaysAéroportDépart, nomAéroportArrivée, nomVilleAéroportArrivée, codePaysAéroportArrivée, dateEtHeureDeDépart, dateEtHeureDArrivée, prix, poidsMaxBagagesEnSoute) VALUES (".$idAvion.", (SELECT nom FROM Aéroport WHERE diminutif = "."'$depart'"."), (SELECT nomVille FROM Aéroport WHERE diminutif ="."'$depart'"."), (SELECT codePays FROM Aéroport WHERE diminutif ="."'$depart'"."),
 	(SELECT nom FROM Aéroport WHERE diminutif ="."'$arrive'"."), (SELECT nomVille FROM Aéroport WHERE diminutif ="."'$arrive'"."), (SELECT codePays FROM Aéroport WHERE diminutif = "."'$arrive'"."),"."'$dateheureDepart'".","."'$dateheureArrive'".", (SELECT random_between(30,100)), 23); ";
 
     sendQuery($query);
 }
 
+/**
+ * getClasses: This function will be used to get all flight classes
+ * @return PDOStatement
+ */
 function getClasses()
 {
     $query = "SELECT nom FROM Classe";
@@ -268,7 +258,10 @@ function compareMail($mailCheck)
     return $resultat;
 }
 
-
+/**
+ * getAllCompanies: This function will be used to get all companies
+ * @return PDOStatement
+ */
 function getAllCompanies()
 {
     $resultat = sendQuery("SELECT * FROM compagnie");
@@ -276,6 +269,10 @@ function getAllCompanies()
     return $resultat;
 }
 
+/**
+ * getAllFlightAdmin: This function will be used to get all flights
+ * @return PDOStatement
+ */
 function getAllFlightAdmin()
 {
     $query = "select id, idavion, nomaéroportdépart, nomaéroportarrivée, dateetheurededépart, dateetheuredarrivée, prix, poidsmaxbagagesensoute from vol";
@@ -286,6 +283,10 @@ function getAllFlightAdmin()
 
 }
 
+/**
+ * deleteFlight: This function will be used to delete a flight
+ * @return void
+ */
 function deleteFlight()
 {
     $id = $_GET['idVol'];
@@ -293,6 +294,11 @@ function deleteFlight()
     sendQuery($query);
 }
 
+/**
+ * signUP: This function will be used to signUp
+ * @param $userdata
+ * @return void
+ */
 function signUP($userdata)
 {
     extract($userdata);

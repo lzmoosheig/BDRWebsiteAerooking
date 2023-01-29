@@ -42,8 +42,6 @@ try
             case 'createnewflight': createnewflight(); break;
 
             case 'reserveFlight' : reserveFlight(); break;
-
-            case 'sliderTest': sliderTest(); break;
 			
 			case 'getFlight' : getflight(); break;
 

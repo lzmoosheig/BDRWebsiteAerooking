@@ -18,27 +18,31 @@ stream_context_set_default([
     ]);
 
 
-function sliderTest()
-{
-    require "views/view_testSlider.php";
-}
-
+/**
+ * myaccount: This function is used to access to all reservation for the user
+ * @return void
+ */
 function myaccount()
 {
     $allRes = getReservation();
-
-
     require "views/view_myaccount.php";
 }
 
+/**
+ * resDetails: This function is used to get flight details such as passengers list
+ * @return void
+ */
 function resDetails()
 {
     $resDetail = getPassengerFromRes();
     $moreDetail = getMultipleFlight();
-
     require "views/view_resDetails.php";
 }
 
+/**
+ * signupView: This function is used to access to the signup view
+ * @return void
+ */
 function signupView()
 {
     if(!isset($_SESSION['user']))
@@ -49,12 +53,20 @@ function signupView()
     }
 }
 
+/**
+ * showFlight: This function is used to show flight according to user filters
+ * @return void
+ */
 function showFlight()
 {
     $allflight = getallFlight($_POST);
     require "views/view_showflight.php";
 }
 
+/**
+ * viewAdmin: This function is used to access the admin panel
+ * @return void
+ */
 function viewAdmin()
 {
     if(isset($_SESSION['user']) && $_SESSION['user'] == "admin@aeroking.com")
@@ -66,15 +78,22 @@ function viewAdmin()
 
 }
 
+/**
+ * viewAllFlights: This function is used to access the all flight view (Only for admin)
+ * @return void
+ */
 function viewAllFlights()
 {
     $allFlight = getAllFlightAdmin();
     require "views/view_allFlight.php";
 }
 
+/**
+ * getflight: This function is used to access the flight search form
+ * @return void
+ */
 function getflight()
 {
-
     $airports = getAirportName();
     $companies = getAllCompanies();
     $classes = getClasses();
@@ -86,6 +105,10 @@ function getflight()
 	require "views/view_flight.php";
 }
 
+/**
+ * viewAddFlight: This function is used to access the view where you can add flight
+ * @return void
+ */
 function viewAddFlight()
 {
     $airports = getAirportName();
@@ -94,6 +117,10 @@ function viewAddFlight()
     require "views/view_AddFlight.php";
 }
 
+/**
+ * createnewflight: This function is used to create new flight
+ * @return void
+ */
 function createnewflight()
 {
     createFlight($_POST);
@@ -102,13 +129,18 @@ function createnewflight()
 }
 
 /**
- * login: Show Login Page
+ * login: This function is used to show Login Page
+ * @return void
  */
 function login()
 {
     require "views/view_login.php";
 }
 
+/**
+ * signupDb: This function is used to register new account to the database
+ * @return void
+ */
 function signupDb()
 {
     signUP($_POST);
@@ -119,13 +151,12 @@ function signupDb()
 }
 
 /**
- * Sign In: The user will use this function sign in into the website
+ * Sign In: This function is used to sign in into the website
+ * @return void
  */
 function signin()
 {
     extract($_POST);
-
-    // $email & $pswd
 
     if (isset($email) && isset($pswd))
     {
@@ -155,6 +186,10 @@ function signin()
     }
 }
 
+/**
+ * reserveFlight: This function is used to reserve flight
+ * @return void
+ */
 function reserveFlight()
 {
     if(isset($_SESSION['user'])) {
@@ -165,6 +200,11 @@ function reserveFlight()
         require "views/view_getFlight.php";
     }
 }
+
+/**
+ * reserverVol: This function is used to access the reservation form (to fill passengers infos)
+ * @return void
+ */
 function reserverVol()
 {
     if(isset($_SESSION['user'])) {
@@ -175,7 +215,8 @@ function reserverVol()
 }
 
 /**
- * Logout: the user will use this function sign out the website
+ * Logout: This function is used to sign out of the website
+ * @return void
  */
 function logout()
 {
@@ -187,6 +228,10 @@ function logout()
     header("location:index.php?action=getFlight");
 }
 
+/**
+ * supprimerVol: This function will be used to delete a flight (Only for admin)
+ * @return void
+ */
 function supprimerVol()
 {
     if(isset($_SESSION['user']) && $_SESSION['user'] == "admin@aeroking.com")

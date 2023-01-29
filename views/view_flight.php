@@ -347,9 +347,6 @@ tr.spaceUnder>td {
                         </div>
                     </div>
 
-
-
-
                     <span><br></span>
                     <div class="row">
                         <div class="form-btn">
@@ -357,10 +354,6 @@ tr.spaceUnder>td {
                         </div>
                     </div>
                 </form>
-                    <!-- Pour tester -->
-                <!-- Afficher les vols -->
-
-
             </div>
         </div>
         <br>
