@@ -116,7 +116,6 @@ function signupDb()
 
     $_SESSION['user'] = $email;
     header("location:index.php?action=getFlight");
-
 }
 
 /**
@@ -162,11 +161,17 @@ function reserveFlight()
         makeReservation($_SESSION['post-data'], $_POST);
 
         require "views/view_res.php";
+    } else {
+        require "views/view_getFlight.php";
     }
 }
 function reserverVol()
 {
-    require "views/view_reservation.php";
+    if(isset($_SESSION['user'])) {
+        require "views/view_reservation.php";
+    } else {
+        require "views/view_flight.php";
+    }
 }
 
 /**
@@ -190,6 +195,6 @@ function supprimerVol()
 
         header("location:index.php?action=viewAdmin&volSupprime=success");
     } else {
-        header("location:index.php?action=getFlight");
+        header("location:index.php?action=flight");
     }
 }

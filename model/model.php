@@ -301,3 +301,28 @@ function signUP($userdata)
 }
 
 
+/**
+ * Fonction pour update les prix de vol périodiquement
+ * Cette fonction n'est pas utilisable actuellement
+ * @return void
+ */
+function update_prix_vol()
+{
+    $db_connection = pg_connect("host=localhost port=5432 dbname=Aerooking");
+
+    $query = "UPDATE vol SET prix = prix + 10 WHERE dateEtHeureDeDépart > CURRENT_DATE";
+    sendQuery($query);
+
+    pg_close($db_connection);
+
+    $chrono = new \Cron\CronExpression('0 0 * * 0', new \Cron\FieldFactory);
+    $update_event = new \Cron\Event\Event('update_prix_vol', $chrono);
+    $schedule = new \Cron\Schedule\CronSchedule();
+    $schedule->addEvent($update_event);
+    $schedule->run();
+}
+
+
+
+
+

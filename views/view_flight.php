@@ -304,7 +304,7 @@ tr.spaceUnder>td {
                         <!-- Départ -->
                         <div class="col-md-6">
                             <div class="form-group">
-                                <span class="form-label">Departing</span>
+                                <span class="form-label">Départ</span>
                                 <input class="form-control" type="date" name="dateDepart" required/>
                             </div>
                         </div>
@@ -312,7 +312,7 @@ tr.spaceUnder>td {
                         <!-- Arrivée -->
                         <div id="returning-form" class="col-md-6" style="display: none;">
                             <div class="form-group">
-                                <span class="form-label">Returning</span>
+                                <span class="form-label">Retour</span>
                                 <input class="form-control" type="date" name="dateArrivée"/>
                             </div>
                         </div>
@@ -353,7 +353,7 @@ tr.spaceUnder>td {
                     <span><br></span>
                     <div class="row">
                         <div class="form-btn">
-                            <button class="submit-btn">Show flights</button>
+                            <button class="submit-btn">Rechercher un vol</button>
                         </div>
                     </div>
                 </form>
