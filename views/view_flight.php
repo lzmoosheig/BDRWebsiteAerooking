@@ -217,20 +217,28 @@ tr.spaceUnder>td {
                         <!-- Type de trajet -->
                         <div class="col-md-3">
                             <label for="allerRetour"> Type de trajet:</label>
-                            <select name="allerRetour"  id="allerRetour" class="dropdownStyle">
+                            <select name="allerRetour"  id="allerRetour" class="dropdownStyle" onchange="onChangeAllerRetour()">
                                 <option value="simple"> Aller Simple </option>
                                 <option value="allerretour"> Aller-Retour </option>
                             </select>
                         </div>
 
+                        <script>
+                            function onChangeAllerRetour() {
+                                $('#returning-form').toggle();
+                            }
+
+                        </script>
+
                         <!-- Classes -->
                         <div class="col-md-3">
                             <label for="allerRetour"> Classe:</label>
                             <select name="classe"  id="classe" class="dropdownStyle">
-                                <option value="economy"> Economie</option>
-                                <option value="premiumeconomy"> Economie Premium </option>
-                                <option value="business"> Affaire </option>
-                                <option value="first"> Première </option>
+                                <?php
+                                while ($row = pg_fetch_row($classes)) {
+                                    echo "<option value=".$row[0].">".$row[0].""."</option>";
+                                }
+                                ?>
                             </select>
                         </div>
 
@@ -302,10 +310,10 @@ tr.spaceUnder>td {
                         </div>
 
                         <!-- Arrivée -->
-                        <div class="col-md-6">
+                        <div id="returning-form" class="col-md-6" style="display: none;">
                             <div class="form-group">
                                 <span class="form-label">Returning</span>
-                                <input class="form-control" type="date" name="dateArrivée" required/>
+                                <input class="form-control" type="date" name="dateArrivée"/>
                             </div>
                         </div>
                     </div>
@@ -320,72 +328,28 @@ tr.spaceUnder>td {
                         <div class="col-md-2">
                             <input type="number" name="prixMax" placeholder="Entrer le prix maximum">
                         </div>
-                            <!-- Croissant / décroissant -->
-                            <div class="col-md-2">
-                                <label class="container">Croissant
-                                    <input type="radio" checked="checked" name="ordre" value="ASC">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="container">Décroissant
-                                    <input type="radio" name="ordre" value="DESC">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </div>
 
-                            <!-- Filtre par compagnie -->
-                            <h4> Par compagnie: </h4>
-                            <div class="col-md-2">
-                                <select name="compagnie"  id="compagnie" class="dropdownStyle">
-                                <?php
-                                while ($row = pg_fetch_row($companies)) {
-                                    echo '<option value="'.$row[0].'">'.$row[0].'</option>';
+                        <!-- Croissant / décroissant -->
+                        <div class="col-md-2">
+                            <label class="container">Croissant
+                                <input type="radio" checked="checked" name="ordre" value="ASC">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="container">Décroissant
+                                <input type="radio" name="ordre" value="DESC">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
 
-                                }
-                                ?>
-                                </select>
-                            </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="row-md-12">
-                            <table>
-                                <tr>
-                                    <td>
-                                        <h4> Escales: </h4>
-                                        <table>
-                                            <tr>
-                                                <td>
-                                                    <input type="radio" id="direct" name="escale" value="direct" checked/>
-                                                    <label for="direct">Vol direct</label>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <input type="radio" id="onestopover" name="escale" value="one"/>
-                                                    <label for="onestopover">Une escale</label>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <input type="radio" id="twostopover" name="escale" value="twoormore"/>
-                                                    <label for="twostopover">Deux escales ou plus</label>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <span><br></span>
-                                                    <h4> Temps de voyage: </h4>
-                                                    <input type="number" id="tempsvoyage" name="tempsvoyage" step="1" placeholder="Nombre d'heures max"/>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
+                        <div class="col-md-2">
+                            <h4> Temps de voyage: </h4>
+                            <input type="number" id="tempsvoyage" name="tempsvoyage" step="1" placeholder="Nombre d'heures max"/>
                         </div>
                     </div>
+
+
+
+
                     <span><br></span>
                     <div class="row">
                         <div class="form-btn">
@@ -441,54 +405,8 @@ function calc() {
 }
 </script>
 
-<!--
-<script>
-const rangeInput = document.querySelectorAll(".range-input input"),
-    priceInput = document.querySelectorAll(".price-input input"),
-    range = document.querySelector(".slider .progress");
-let priceGap = 100;
-
-priceInput.forEach((input) => {
-    input.addEventListener("input", (e) => {
-        let minPrice = parseInt(10),
-            maxPrice = parseInt(30000);
-
-        if (maxPrice - minPrice >= priceGap && maxPrice <= rangeInput[1].max) {
-            if (e.target.className === "input-min") {
-                rangeInput[0].value = minPrice;
-                range.style.left = (minPrice / rangeInput[0].max) * 100 + "%";
-            } else {
-                rangeInput[1].value = maxPrice;
-                range.style.right = 100 - (maxPrice / rangeInput[1].max) * 100 + "%";
-            }
-        }
-    });
-});
-
-rangeInput.forEach((input) => {
-    input.addEventListener("input", (e) => {
-        let minVal = parseInt(10),
-            maxVal = parseInt(30000);
-
-        if (maxVal - minVal < priceGap) {
-            if (e.target.className === "range-min") {
-                rangeInput[0].value = maxVal - priceGap;
-            } else {
-                rangeInput[1].value = minVal + priceGap;
-            }
-        } else {
-            priceInput[0].value = minVal;
-            priceInput[1].value = maxVal;
-            range.style.left = (minVal / rangeInput[0].max) * 100 + "%";
-            range.style.right = 100 - (maxVal / rangeInput[1].max) * 100 + "%";
-        }
-    });
-});
-</script>-->
 
 <script src="jquery-3.6.3.min.js" ></script>
-<script src="priceSlider.js" ></script>
-
 </div>
 
 <?php $contenu = ob_get_clean(); // Stocke la page dans la variable

@@ -16,13 +16,16 @@ ob_start();
         }
     </style>
 </head>
+
+
+
 <!-- CONTENT -->
 <div class="section-center">
     <div class="container" style="margin-top: 200px">
         <div class="row">
             <!-- Type de trajet, classes et bagages -->
             <div class="booking-form">
-                <form action="index.php?action=reserveFlight" method="post">
+                <form action="index.php?action=reserveFlight<?php if(isset($_GET['idVol'])) echo '&idVol='.($_GET['idVol'])?>" method="post">
                     <div class="row">
                         <h1>Réservation du vol:</h1>
                         <span></span>

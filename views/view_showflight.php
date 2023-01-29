@@ -212,7 +212,7 @@ ob_start();
             <div class="row">
                 <!-- Type de trajet, classes et bagages -->
                 <div class="booking-form">
-                    <form action="index.php?action=showFlight" method="post">
+                    <form action="index.php?action=reserverVol" method="post">
                             <!-- Liste des vols -->
                             <div class="row">
                                 <span><br></span>
@@ -231,34 +231,27 @@ ob_start();
                                         <th>Prix</th>
                                         <th></th>
                                     </tr>
+                                    <?php
 
-                                    <tr class="spaceUnder">
-                                        <td>Londres</td>
-                                        <td>New-York</td>
-                                        <td>Swiss Air</td>
-                                        <td>10:00</td>
-                                        <td>17:00</td>
-                                        <td>1000.- CHF</td>
+                                    $_SESSION['post-data'] = $_POST;
+
+                                    while ($row = pg_fetch_row($allflight)) {
+                                        echo '<tr class="spaceUnder">
+                                        <td>'.$row[1].'</td>
+                                        <td>'.$row[2].'</td>
+                                        <td>'.$row[3].'</td>
+                                        <td>'.$row[4].'</td>
+                                        <td>'.$row[5].'</td>
+                                        <td>'.$row[6].' .- CHF'."</td>
                                         <td>
-                                            <a href="index.php?action=reserverVol">
-                                                <button>Réserver</button>
-                                            </a>
+                                        
+                                        <a class=\"btn\" href=\"index.php?action=reserverVol&idVol=$row[0]\"> Réserver </a>
+                                        
+
                                         </td>
-                                    </tr>
-                                    <tr class="spaceUnder">
-                                        <td>Paris</td>
-                                        <td>Doha</td>
-                                        <td>Emirat Airline</td>
-                                        <td>14:00</td>
-                                        <td>19:00</td>
-                                        <td>2000.- CHF</td>
-                                        <td>
-                                            <a href="index.php?action=reserverVol">
-                                                <button>Réserver</button>
-                                            </a>
-                                            <!--<input type="button" href="index.php?action=reserverVol" value="Réserver">-->
-                                        </td>
-                                    </tr>
+                                    </tr>";
+                                    }
+                                    ?>
                                 </table>
                             </div>
                 <!-- Pour tester -->

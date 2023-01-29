@@ -14,12 +14,8 @@ function getBD()
 {
     // Connect to local DB
 
-    $db_connection = pg_connect("host=localhost dbname=testBDR user=postgres password=Coclove22");
-    if ($db_connection) {
-        echo 'Connection attempt succeeded.';
-    } else {
-        echo 'Connection attempt failed.';
-    }
+    $db_connection = pg_connect("host=localhost dbname= user=postgres password=");
+
     return $db_connection;
 }
 
@@ -79,16 +75,47 @@ if (mysqli_more_results($conn)) {
  */
 function getUser($mail)
 {
-    $user = sendQuery("SELECT Password, MailAddress FROM users WHERE MailAddress=:mailCheck", array("mailCheck"=>$mail));
+    $user = sendQuery("SELECT mail, motdepasse FROM Compte WHERE mail ="."'$mail'");
 
     return $user;
 }
 
-function makeReservation($resdata)
+function makeReservation($resdata, $passengerInfos)
 {
     extract($resdata);
+    extract($passengerInfos);
 
-    // TODO
+    $flag = 'FALSE';
+
+    // $nbBagMain, $nbBagSoute, $allerRetour
+
+    if($allerRetour != "simple")
+    {
+        $flag = 'TRUE';
+    }
+
+    $idVol = $_GET['idVol'];
+
+    $mail = $_SESSION['user'];
+
+    $counterPassenger = 0;
+
+    $query = "INSERT INTO Réservation (mailClient, dateEtHeureRéservation, nbBagagesEnSoute, nbBagagesAMain, allerRetour) 
+                VALUES ((SELECT mailCompte FROM Client WHERE mailCompte = "."'$mail'"."),"."DEFAULT".",".$nbBagSoute.",".$nbBagMain.",". $flag.");".
+             "INSERT INTO Vol_Réservation (idréservation,idvol) VALUES ((select MAX(id) from Réservation),".$idVol.");";
+
+            foreach ($_POST as $passengersInfos)
+            {
+                if (!empty($passengersInfos[0]) && !empty($passengersInfos[1]) && !empty($passengersInfos[2])) {
+                    $query = $query."INSERT INTO Voyageur (nom, prénom, dateDeNaissance) VALUES(" . "'$passengersInfos[0]'" . "," . "'$passengersInfos[1]'" . "," . "'$passengersInfos[2]'" . ");";
+                    $query = $query."INSERT INTO Voyageur_Réservation (idvoyageur, idréservation) VALUES((select MAX(id) from Voyageur),(select MAX(id) from Réservation));";
+                    $counterPassenger++;
+                }
+            }
+
+            $query = $query."INSERT INTO Classe_Réservation (nomclasse, idréservation, places) VALUES ("."'$classe'".", (select MAX(id) from Réservation), $counterPassenger)";
+
+    sendQuery($query);
 
 }
 
@@ -99,9 +126,67 @@ INNER JOIN ville on Aéroport.nomville = Ville.nom INNER JOIN Pays on Ville.code
     return $airportsInfo;
 }
 
+function getReservation()
+{
+    if(isset($_SESSION['user'])) {
+        $mail = $_SESSION['user'];
+
+        $query = "SELECT \"DateDeRéservation\",\"NombreDePlacesRéservées\",\"AéroportDeDépart\",\"TempsDeDépart\",\"AéroportDArrivée\",\"TempsDArrivée\",\"IDRéservation\"
+            FROM vRéservations
+            WHERE \"IDClient\" =" . "'$mail'" . "
+            GROUP BY \"DateDeRéservation\",
+              \"NombreDePlacesRéservées\",
+              \"AéroportDeDépart\",
+              \"TempsDeDépart\",
+              \"AéroportDArrivée\",
+              \"TempsDArrivée\",
+              \"IDRéservation\";";
+    }
+
+    $result = sendQuery($query);
+    return $result;
+}
+
+function getPassengerFromRes()
+{
+    $idRes = $_GET['idRes'];
+    $mail = $_SESSION['user'];
+
+
+    $query = "SELECT \"Nom\",\"Prénom\",\"ClasseDeVol\"
+                FROM vRéservations
+                WHERE \"IDClient\" ="."'$mail'"." AND "."\"IDRéservation\" =".$idRes." 
+                GROUP BY \"Nom\",
+                  \"Prénom\",
+                  \"ClasseDeVol\";";
+
+    $res = sendQuery($query);
+    return $res;
+}
+
+function getMultipleFlight()
+{
+    $idRes = $_GET['idRes'];
+    $mail = $_SESSION['user'];
+
+    $query = "SELECT \"NombreDePlacesRéservées\",\"AéroportDeDépart\",\"TempsDeDépart\",\"AéroportDArrivée\",\"TempsDArrivée\",
+  \"CompagnieAérienne\"
+FROM vRéservations
+WHERE \"IDClient\" ="."'$mail'"." AND "."\"IDRéservation\" =".$idRes."
+GROUP BY \"NombreDePlacesRéservées\",
+  \"TempsDeDépart\",
+  \"TempsDArrivée\",
+  \"AéroportDeDépart\",
+  \"AéroportDArrivée\",
+  \"CompagnieAérienne\";";
+
+    $res = sendQuery($query);
+    return $res;
+
+}
+
 function getallFlight($aeroport)
 {
-    var_dump($_POST);
     extract($aeroport);
 
     $stringDepart = "";
@@ -123,53 +208,21 @@ function getallFlight($aeroport)
     $stringArrive = rtrim($stringArrive, ',');
 
 
-    /*
-array (size=13)
-'allerRetour' => string 'simple' (length=6)
-'classe' => string 'economy' (length=7)
-'nbBagMain' => string '1' (length=1)
-'nbBagSoute' => string '1' (length=1)
-'depart' =>
-array (size=3)
-  0 => string 'SYD' (length=3)
-  1 => string 'VIE' (length=3)
-  2 => string 'BRU' (length=3)
-'arrive' =>
-array (size=1)
-  0 => string 'VIE' (length=3)
-'dateDepart' => string '2023-02-03' (length=10)
-'dateArrivée' => string '2023-02-03' (length=10)
-'prixMax' => string '1000' (length=4)
-'ordre' => string 'ASC' (length=3)
-'compagnie' => string 'Air France' (length=10)
-'escale' => string 'direct' (length=6)
-'tempsvoyage' => string '1000' (length=4)
+    if($dateArrivée != "")
+    {
+        $query = "SELECT \"IDVol\", \"AéroportDeDépart\", \"AéroportDArrivée\", \"CompagnieAérienne\", \"TempsDeDépart\", \"TempsDArrivée\", \"PrixDuVol\" from vVols WHERE "."\"ClasseDeVol\""."="."'$classe'"." AND "."\"MaxBagagesAMain\""."-"."\"NombreDeBagagesAMainDéjàRéservés\"".">=".$nbBagMain." AND "."(".
+            "\"PoidsMaxEnSoute\""."-"."\"PoidsDesBagagesEnSouteDéjàRéservés\")"."/"."\"PoidsMaxDeBagageEnSoute\"".">".$nbBagSoute." AND "."\"DiminutifDeLAéroportDeDépart\""."="."ANY("."'{".$stringDepart."}'".")".
+            " AND "."\"DiminutifDeLAéroportDArrivée\""."="."ANY("."'{".$stringArrive."}'".")"." AND "."\"TempsDeDépart\""." BETWEEN "."'$dateDepart'"." AND "."DATE '$dateDepart'"."+ INTERVAL '24 Hours'"." AND ".
+            "\"TempsDArrivée\""." BETWEEN "."'$dateArrivée'"." AND "."DATE '$dateArrivée'"."+ INTERVAL '24 Hours' AND "."\"PrixDuVol\""." BETWEEN "."0"." AND ".$prixMax." AND "."\"CompagnieAérienne\""." LIKE "."'%'".
+            " AND "."\"TempsDArrivée\""."-"."\"TempsDeDépart\""."< INTERVAL "."'$tempsvoyage Hour'"." GROUP BY "."\"IDVol\", \"AéroportDeDépart\", \"AéroportDArrivée\", \"CompagnieAérienne\", \"TempsDeDépart\", \"TempsDArrivée\", \"PrixDuVol\""." ORDER BY "."\"PrixDuVol\" ".$ordre."";
+    } else {
+        $query = "SELECT \"IDVol\",\"AéroportDeDépart\", \"AéroportDArrivée\", \"CompagnieAérienne\", \"TempsDeDépart\", \"TempsDArrivée\", \"PrixDuVol\" from vVols WHERE "."\"ClasseDeVol\""."="."'$classe'"." AND "."\"MaxBagagesAMain\""."-"."\"NombreDeBagagesAMainDéjàRéservés\"".">=".$nbBagMain." AND "."(".
+            "\"PoidsMaxEnSoute\""."-"."\"PoidsDesBagagesEnSouteDéjàRéservés\")"."/"."\"PoidsMaxDeBagageEnSoute\"".">".$nbBagSoute." AND "."\"DiminutifDeLAéroportDeDépart\""."="."ANY("."'{".$stringDepart."}'".")".
+            " AND "."\"DiminutifDeLAéroportDArrivée\""."="."ANY("."'{".$stringArrive."}'".")"." AND "."\"TempsDeDépart\""." BETWEEN "."'$dateDepart'"." AND "."DATE '$dateDepart'"."+ INTERVAL '24 Hours'"." AND ".
+            "\"PrixDuVol\""." BETWEEN "."0"." AND ".$prixMax." AND "."\"CompagnieAérienne\""." LIKE "."'%'".
+            " GROUP BY "."\"IDVol\", \"AéroportDeDépart\", \"AéroportDArrivée\", \"CompagnieAérienne\", \"TempsDeDépart\", \"TempsDArrivée\", \"PrixDuVol\""." ORDER BY "."\"PrixDuVol\" ".$ordre."";
 
-    select \"AéroportDeDépart\", \"AéroportDArrivée\", \"CompagnieAérienne\", \"TempsDeDépart\", \"TempsDArrivée\", \"PrixDuVol\"  from vVols
-group by \"IDVol\", \"AéroportDeDépart\", \"AéroportDArrivée\", \"CompagnieAérienne\", \"TempsDeDépart\", \"TempsDArrivée\", \"PrixDuVol\"
-
-
-*/
-
-
-    $query = "SELECT \"AéroportDeDépart\", \"AéroportDArrivée\", \"CompagnieAérienne\", \"TempsDeDépart\", \"TempsDArrivée\", \"PrixDuVol\" from vVols WHERE "."\"ClasseDeVol\""."="."'$classe'"." AND "."\"MaxBagagesAMain\""."-"."\"NombreDeBagagesAMainDéjàRéservés\"".">=".$nbBagMain." AND "."(".
-        "\"PoidsMaxEnSoute\""."-"."\"PoidsDesBagagesEnSouteDéjàRéservés\")"."/"."\"PoidsMaxDeBagageEnSoute\"".">".$nbBagSoute." AND "."\"DiminutifDeLAéroportDeDépart\""."="."ANY("."'{".$stringDepart."}'".")".
-        "AND "."\"DiminutifDeLAéroportDArrivée\""."="."ANY("."'{".$stringArrive."}'".")"." AND "."\"TempsDeDépart\""." BETWEEN "."'$dateDepart'"." AND "."('$dateDepart'"."+ INTERVAL '1 Day')"." AND ".
-        "\"TempsDArrivée\""." BETWEEN "."'$dateArrivée'"." AND "."('$dateArrivée'"."+ INTERVAL '1 Day') AND "."\"PrixDuVol\""." BETWEEN "."0"." AND ".$prixMax." AND "."\"CompagnieAérienne\""."="."'$compagnie'".
-        " AND "."\"TempsDArrivée\""."-"."\"TempsDeDépart\""."< INTERVAL "."'1 Hour'"." GROUP BY "."\"IDVol\", \"AéroportDeDépart\", \"AéroportDArrivée\", \"CompagnieAérienne\", \"TempsDeDépart\", \"TempsDArrivée\", \"PrixDuVol\""." ORDER BY "."\"PrixDuVol\" ".$ordre."";
-
-    echo $query;
-
-
-
-
-    /*$query = "SELECT aéroport.diminutif, vol.nomaéroportdépart, vol.nomaéroportarrivée, compagnie.nom as Compagnie, vol.dateetheurededépart, vol.dateetheuredarrivée, vol.prix
- FROM vol inner join avion on vol.idavion = avion.id inner join compagnie on avion.nomcompagnie = compagnie.nom 
- inner join aéroport on vol.nomaéroportdépart = aéroport.nom
- WHERE aéroport.diminutif = ANY("."'{".$string."}'".")";
-
-    echo $query;*/
-
+    }
 
 
     $flightsInfo = sendQuery($query);
@@ -187,34 +240,20 @@ function createFlight($flightInfo)
     $dateheureArrive =  str_replace("T"," ",$dateheureArrive);
 
 
-    $query = "INSERT INTO Vol (idAvion, nomAéroportDépart, nomVilleAéroportDépart, codePaysAéroportDépart, nomAéroportArrivée, nomVilleAéroportArrivée, codePaysAéroportArrivée, dateEtHeureDeDépart, dateEtHeureDArrivée, prix, poidsMaxBagagesEnSoute) VALUES ((select MAX(id) from avion
-where nomcompagnie ="."'$compagnie'".")".", (SELECT nom FROM Aéroport WHERE diminutif = "."'$depart'"."), (SELECT nomVille FROM Aéroport WHERE diminutif ="."'$depart'"."), (SELECT codePays FROM Aéroport WHERE diminutif ="."'$depart'"."),
+    $query = "INSERT INTO Vol (idAvion, nomAéroportDépart, nomVilleAéroportDépart, codePaysAéroportDépart, nomAéroportArrivée, nomVilleAéroportArrivée, codePaysAéroportArrivée, dateEtHeureDeDépart, dateEtHeureDArrivée, prix, poidsMaxBagagesEnSoute) VALUES (".$idAvion.", (SELECT nom FROM Aéroport WHERE diminutif = "."'$depart'"."), (SELECT nomVille FROM Aéroport WHERE diminutif ="."'$depart'"."), (SELECT codePays FROM Aéroport WHERE diminutif ="."'$depart'"."),
 	(SELECT nom FROM Aéroport WHERE diminutif ="."'$arrive'"."), (SELECT nomVille FROM Aéroport WHERE diminutif ="."'$arrive'"."), (SELECT codePays FROM Aéroport WHERE diminutif = "."'$arrive'"."),"."'$dateheureDepart'".","."'$dateheureArrive'".", (SELECT random_between(30,100)), 23); ";
 
     sendQuery($query);
-
 }
 
-function createUser($userData)
+function getClasses()
 {
-    extract($userData);
-    // $email et $pswd
-    //sendQuery("INSERT INTO Rooms (Name, LightState, DoorsState, Shelters_idShelters) VALUES ('$Name', $lightState, $doorState, $idShelter);");
+    $query = "SELECT nom FROM Classe";
+    $result = sendQuery($query);
 
-    $user = sendQuery("INSERT INTO compte (mail,motdepasse) VALUES ('$email','$pswd')");
+    return $result;
 }
 
-/**
- * getUserInfo: This function will be used for getting Firstname and Lastname of a user
- * @param $mail
- * @return PDOStatement
- */
-function getUserInfo($mail)
-{
-    $user = sendQuery("SELECT Firstname, Lastname FROM users WHERE MailAddress=:mailCheck", array("mailCheck"=>$mail));
-
-    return $user;
-}
 
 /**
  * compareMail: This function will be used to compare users' mail during login
@@ -223,22 +262,12 @@ function getUserInfo($mail)
  */
 function compareMail($mailCheck)
 {
-    $resultat = sendQuery("SELECT eMail FROM Utilisateurs WHERE MailAddress = :mailCheck", array("mailCheck"=>$mailCheck));
+    $resultat = sendQuery("SELECT mail FROM Compte WHERE mail ="."'$mailCheck'");
+
 
     return $resultat;
 }
 
-/**
- * getUserID: This function will be used to get the user's ID
- * @param $username
- * @return PDOStatement
- */
-function getUserID($username)
-{
-    $resultat = sendQuery("SELECT idUsers FROM users WHERE MailAddress = :username",array("username"=>$username));
-
-    return $resultat;
-}
 
 function getAllCompanies()
 {
@@ -247,8 +276,12 @@ function getAllCompanies()
     return $resultat;
 }
 
-/**
- * GetShelterID: This function will be used to get the shelter's ID
- * @param $shelterName
- * @return PDOStatement
- */
+function getAllFlightAdmin()
+{
+    $query = "select id, idavion, nomaéroportdépart, nomaéroportarrivée, dateetheurededépart, dateetheuredarrivée, prix, poidsmaxbagagesensoute from vol";
+
+    $res = sendQuery($query);
+
+    return $res;
+
+}

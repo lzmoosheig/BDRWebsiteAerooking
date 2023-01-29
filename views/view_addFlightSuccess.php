@@ -16,8 +16,8 @@ ob_start();
         <div class="row">
             <!-- Type de trajet, classes et bagages -->
             <div class="booking-form">
-                <h1> Merci de votre réservation ! </h1>
-                <a href="index.php?action=getFlight"> Retourner sur la page d'accueil</a>
+                <h1> Le vol a été ajouté! </h1>
+                <a href="index.php?action=viewAdmin"> Retourner sur le panel admin</a>
             </div>
         </div>
         <br>

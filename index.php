@@ -15,8 +15,6 @@ try
         // Sélection de l'action passée par l'URL
         switch ($action)
         {
-            case 'home': home(); break;
-
             case 'login': login(); break;
 			
 			case 'signup' : signup(); break;
@@ -33,6 +31,12 @@ try
 
             case 'viewAddFlight': viewAddFlight(); break;
 
+            case 'myaccount': myaccount(); break;
+
+            case 'resDetails': resDetails(); break;
+
+            case 'createPassengers': createPassengers(); break;
+
             case 'createnewflight': createnewflight(); break;
 
             case 'reserveFlight' : reserveFlight(); break;
@@ -43,15 +47,11 @@ try
 
             case 'logout': logout(); break;
 
-            case 'settings': settingsView(); break;
-
-            case 'chgPwd': chgPwd(); break;
-
             default: throw new Exception("Action non valide");
         }
     }
     else
-        home();
+        getflight();
 }
 catch (Exception $e)
 {

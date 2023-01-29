@@ -212,59 +212,41 @@ ob_start();
             <div class="row">
                 <!-- Type de trajet, classes et bagages -->
                 <div class="booking-form">
-                    <form action="index.php?action=createnewflight" method="post">
-                    <h1> Ajout d'un vol </h1>
-                    <br>
-                    <div class="col-md-6">
-                    <H3>Départ</H3>
-                        <select name="depart" required>
-                            <?php
-                            while ($row = pg_fetch_row($airports)) {
-                                echo "<option value=".$row[1].">".$row[0]." (". $row[2].", ".$row[3].")"."</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
+                    <h1> Gestion de mes réservations </h1>
 
-                    <div class="col-md-6">
-                        <H3>Arrivée</H3>
-                        <select name="arrive" required>
-                            <?php
-
-                            pg_result_seek($airports, 0);
-
-                            while ($row = pg_fetch_row($airports)) {
-                                echo "<option value=".$row[1].">".$row[0]." (". $row[2].", ".$row[3].")"."</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <span><br></span>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="dateHeureDepart">Date et heure de départ</label>
-                            <input type="datetime-local" name="dateheureDepart" id="dateHeureDepart">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="dateHeureDepart">Date et heure d'arrivée</label>
-                            <input type="datetime-local" name="dateheureArrive" id="dateHeureDarrive">
-                        </div>
-                    </div>
-                    <span><br></span>
-                    <div class="row">
-                        <h4>ID de l'avion: </h4>
-                        <div class="col-md-2">
-                            <input type="number" name="idAvion">
-                        </div>
-                    </div>
+                    <div class="row" style="margin-left: 5%;margin-right: 5%">
                         <span><br></span>
-                        <div class="row">
-                            <div class="form-btn">
-                                <button class="submit-btn">Create flight</button>
-                            </div>
-                        </div>
-                    </form>
+                        <table>
+                            <tr class="spaceUnder">
+                                <th>Date de réservation</th>
+                                <th>Nombre de places</th>
+                                <th>Aéroport départ</th>
+                                <th>Heure Départ</th>
+                                <th>Aéroport arrivée</th>
+                                <th>Heure d'arrivée</th>
+                                <th></th>
+                            </tr>
+                            <?php
+                            while ($row = pg_fetch_row($allRes)) {
+                                echo '<tr class="spaceUnder">
+                                        <td>'.$row[0].'</td>
+                                        <td>'.$row[1].'</td>
+                                        <td>'.$row[2].'</td>
+                                        <td>'.$row[3].'</td>
+                                        <td>'.$row[4].'</td>
+                                        <td>'.$row[5]."</td>
+                                        <td>      
+                                            <a class=\"btn\" href=\"index.php?action=resDetails&idRes=$row[6]\"> détails </a>
+                                        </td>
+                                    </tr>";
+                            }
+                            ?>
+                        </table>
+                    </div>
+
+
+                    <div class="row">
+                    </div>
                 </div>
             </div>
             <br>
